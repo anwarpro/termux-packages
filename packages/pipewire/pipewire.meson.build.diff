@@ -1,0 +1,10 @@
+--- meson.build.orig	2022-05-24 11:10:00.415154895 +0530
++++ ./src/pipewire/meson.build	2022-05-24 11:10:28.705154884 +0530
+@@ -47,6 +47,7 @@
+ ]
+
+ pipewire_sources = [
++  '@TERMUX_PKG_BUILDER_DIR@/reallocarray.c',
+   'buffers.c',
+   'impl-core.c',
+   'impl-client.c',
