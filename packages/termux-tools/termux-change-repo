@@ -16,7 +16,7 @@ select_repository() {
 
     elif [ "$1" == "Default repositories" ]; then
         echo "[*] Termux primary host (EU) selected"
-        MAIN="https://packages.termux.org/apt/termux-main"
+        MAIN="https://helloanwar.com/termux-custom-repo"
         ROOT="https://packages.termux.org/apt/termux-root"
         X11="https://packages.termux.org/apt/termux-x11"
 
