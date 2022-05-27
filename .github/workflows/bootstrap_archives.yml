@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.action_path }}
+  group: ${{ GITHUB_ACTION_PATH }}
   cancel-in-progress: true
 
 jobs:
