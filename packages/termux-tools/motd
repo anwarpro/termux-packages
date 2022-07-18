@@ -1,9 +1,6 @@
 
-Welcome to Termux!
-
-Communities: https://termux.org/community
-Gitter chat: https://gitter.im/termux/termux
-IRC channel: #termux on libera.chat
+If you are facing keyboard issue
+use Gboard or other device available keyboard
 
 Working with packages:
 
@@ -11,10 +8,5 @@ Working with packages:
  * Install a package: pkg install <package>
  * Upgrade packages:  pkg upgrade
 
-Subscribing to additional repositories:
-
- * Root:     pkg install root-repo
- * X11:      pkg install x11-repo
-
-Report issues at https://termux.org/issues
+Currently you can Only install (python, nodejs, nodejs-lts)
 

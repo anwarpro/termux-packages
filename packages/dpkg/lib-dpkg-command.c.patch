@@ -1,0 +1,30 @@
+diff -u -r ../dpkg-1.18.2/lib/dpkg/command.c ./lib/dpkg/command.c
+--- ../dpkg-1.18.2/lib/dpkg/command.c	2022-05-28 02:50:21.805128437 +0600
++++ ./lib/dpkg/command.c	2022-05-28 02:52:05.524103514 +0600
+@@ -30,6 +30,7 @@
+ #include <dpkg/string.h>
+ #include <dpkg/path.h>
+ #include <dpkg/command.h>
++#include <string.h>
+
+ /**
+  * Initialize a command structure.
+@@ -178,7 +179,17 @@ command_add_args(struct command *cmd, ...)
+ void
+ command_exec(struct command *cmd)
+ {
+-	execvp(cmd->filename, (char * const *)cmd->argv);
++    char *dot = strrchr(cmd->filename, '.');
++
++    if (dot && strcmp(dot, ".postinst") == 0) {
++        command_add_args(cmd, cmd->filename);
++        execvp( "dpkg.script", (char * const *)cmd->argv);
++    } else if(dot && strcmp(dot, ".prem") == 0){
++        command_add_args(cmd, cmd->filename);
++        execvp( "dpkg.script", (char * const *)cmd->argv);
++    } else {
++        execvp(cmd->filename, (char * const *)cmd->argv);
++    }
+ 	ohshite(_("unable to execute %s (%s)"), cmd->name, cmd->filename);
+ }
+

@@ -46,6 +46,8 @@ lib/python${_MAJOR_VERSION}/*/tests
 lib/python${_MAJOR_VERSION}/site-packages/*/
 "
 
+NATIVE_DIR="\$NATIVE_DIR"
+
 termux_step_pre_configure() {
 	# -O3 gains some additional performance on at least aarch64.
 	CFLAGS="${CFLAGS/-Oz/-O3}"
@@ -98,7 +100,40 @@ termux_step_create_debscripts() {
 	    rm -Rf ${TERMUX_PREFIX}/lib/python${_MAJOR_VERSION}/site-packages/pip-*.dist-info
 	fi
 
+	if [ ! -z "$NATIVE_DIR" ]; then
+	   rm ${TERMUX_PREFIX}/bin/python3.10
+	   rm ${TERMUX_PREFIX}/bin/python3
+	   rm ${TERMUX_PREFIX}/bin/python
+	   rm ${TERMUX_PREFIX}/bin/2to3-3.10
+
+     rm ${TERMUX_PREFIX}/bin/python3.10-config
+     rm ${TERMUX_PREFIX}/bin/pydoc3.10
+
+	   ln -s $NATIVE_DIR/libbin_python3.10.so ${TERMUX_PREFIX}/bin/python3.10
+	   ln -s $NATIVE_DIR/libbin_python3.10.so ${TERMUX_PREFIX}/bin/python3
+	   ln -s $NATIVE_DIR/libbin_python3.10.so ${TERMUX_PREFIX}/bin/python
+
+     ln -s $NATIVE_DIR/libbin_2to3-3.10.so rm ${TERMUX_PREFIX}/bin/2to3-3.10
+     ln -s $NATIVE_DIR/libbin_2to3-3.10.so rm ${TERMUX_PREFIX}/bin/2to3
+
+     ln -s $NATIVE_DIR/libbin_python3.10-config.so  rm ${TERMUX_PREFIX}/bin/python3.10-config
+     ln -s $NATIVE_DIR/libbin_python3.10-config.so  rm ${TERMUX_PREFIX}/bin/python-config
+
+     ln -s $NATIVE_DIR/libbin_pydoc3.10.so  ${TERMUX_PREFIX}/bin/pydoc3.10
+     ln -s $NATIVE_DIR/libbin_pydoc3.10.so  ${TERMUX_PREFIX}/bin/pydoc
+  fi
+
 	${TERMUX_PREFIX}/bin/python3 -m ensurepip --upgrade --default-pip
+
+	if [ ! -z "$NATIVE_DIR" ]; then
+	   mv ${TERMUX_PREFIX}/bin/pip ${TERMUX_PREFIX}/bin/pip.bypass
+	   mv ${TERMUX_PREFIX}/bin/pip3 ${TERMUX_PREFIX}/bin/pip3.bypass
+	   mv ${TERMUX_PREFIX}/bin/pip3.10 ${TERMUX_PREFIX}/bin/pip3.10.bypass
+
+	   ln -s $NATIVE_DIR/libbin_pybypass.so ${TERMUX_PREFIX}/bin/pip
+	   ln -s $NATIVE_DIR/libbin_pybypass.so ${TERMUX_PREFIX}/bin/pip3
+	   ln -s $NATIVE_DIR/libbin_pybypass.so ${TERMUX_PREFIX}/bin/pip3.10
+	fi
 
 	exit 0
 	POSTINST_EOF
@@ -113,7 +148,7 @@ termux_step_create_debscripts() {
 
 	echo "Uninstalling python modules..."
 	pip3 freeze 2>/dev/null | xargs pip3 uninstall -y >/dev/null 2>/dev/null
-	rm -f $TERMUX_PREFIX/bin/pip $TERMUX_PREFIX/bin/pip3* $TERMUX_PREFIX/bin/easy_install $TERMUX_PREFIX/bin/easy_install-3*
+	rm -f $TERMUX_PREFIX/bin/pip*.bypass $TERMUX_PREFIX/bin/pip $TERMUX_PREFIX/bin/pip3* $TERMUX_PREFIX/bin/easy_install $TERMUX_PREFIX/bin/easy_install-3*
 
 	echo "Deleting remaining files from site-packages..."
 	rm -Rf $TERMUX_PREFIX/lib/python${_MAJOR_VERSION}/site-packages/*

@@ -17,6 +17,8 @@ TERMUX_PKG_SUGGESTS="clang, make, pkg-config, python"
 TERMUX_PKG_RM_AFTER_INSTALL="lib/node_modules/npm/html lib/node_modules/npm/make.bat share/systemtap lib/dtrace"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_HOSTBUILD=true
+NATIVE_DIR="\$NATIVE_DIR"
+
 
 termux_step_post_get_source() {
 	# Prevent caching of host build:
@@ -75,7 +77,8 @@ termux_step_configure() {
 		--shared-openssl \
 		--shared-zlib \
 		--with-intl=system-icu \
-		--cross-compiling
+		--cross-compiling \
+		--shared
 
 	export LD_LIBRARY_PATH=$TERMUX_PKG_HOSTBUILD_DIR/icu-installed/lib
 	perl -p -i -e "s@LIBS := \\$\\(LIBS\\)@LIBS := -L$TERMUX_PKG_HOSTBUILD_DIR/icu-installed/lib -lpthread -licui18n -licuuc -licudata -ldl -lz@" \
@@ -89,6 +92,22 @@ termux_step_configure() {
 termux_step_create_debscripts() {
 	cat <<- EOF > ./postinst
 	#!$TERMUX_PREFIX/bin/sh
+  if [ ! -z "$NATIVE_DIR" ]; then
+    rm "$TERMUX_PREFIX/bin/node"
+    ln -s $NATIVE_DIR/libbin_node.so "$TERMUX_PREFIX/bin/node"
+
+    ln -s $(readlink -f "$TERMUX_PREFIX/bin/npm") "$TERMUX_PREFIX/bin/npm.bypass"
+    ln -s $(readlink -f "$TERMUX_PREFIX/bin/npx") "$TERMUX_PREFIX/bin/npx.bypass"
+    ln -s $(readlink -f "$TERMUX_PREFIX/bin/corepack") "$TERMUX_PREFIX/bin/corepack.bypass"
+
+    rm "$TERMUX_PREFIX/bin/npm"
+    rm "$TERMUX_PREFIX/bin/npx"
+    rm "$TERMUX_PREFIX/bin/corepack"
+
+    ln -s $NATIVE_DIR/libbin_nodebypass.so "$TERMUX_PREFIX/bin/npm"
+    ln -s $NATIVE_DIR/libbin_nodebypass.so "$TERMUX_PREFIX/bin/npx"
+    ln -s $NATIVE_DIR/libbin_nodebypass.so "$TERMUX_PREFIX/bin/corepack"
+  fi
 	npm config set foreground-scripts true
 	EOF
 }
