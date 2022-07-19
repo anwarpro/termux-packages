@@ -51,7 +51,7 @@ termux_step_pre_configure() {
 }
 
 termux_step_post_make_install() {
-	printf "# The main termux repository:\ndeb https://packages-cf.termux.org/termux-main-21 stable main\n" > $TERMUX_PREFIX/etc/apt/sources.list
+	printf "# The main termux repository:\ndeb https://apthero.sgp1.cdn.digitaloceanspaces.com/android-21 stable main\n" > $TERMUX_PREFIX/etc/apt/sources.list
 	rm $TERMUX_PREFIX/include/apt-pkg -r
 
 	# apt-transport-tor
