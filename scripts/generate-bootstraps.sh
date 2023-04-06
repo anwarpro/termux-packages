@@ -24,7 +24,7 @@ TERMUX_PACKAGE_MANAGERS=("apt" "pacman")
 
 # The repository base urls mapping for package managers.
 declare -A REPO_BASE_URLS=(
-  ["apt"]="https://apthero.sgp1.cdn.digitaloceanspaces.com/dpkg"
+  ["apt"]="https://helloanwar.com/neptune-terminal-repo/dpkg"
   ["pacman"]="https://s3.amazonaws.com/termux-main.pacman"
 )
 
@@ -58,7 +58,7 @@ read_package_list_deb() {
   local architecture
   for architecture in all "$1"; do
     if [ ! -e "${BOOTSTRAP_TMPDIR}/packages.${architecture}" ]; then
-      echo "[*] Downloading package list for architecture '${architecture}'..."
+      echo "[*] Downloading package list for architecture '${architecture}'... ${REPO_BASE_URL}/dists/stable/main/binary-${architecture}/Packages"
       if ! curl --fail --location \
         --output "${BOOTSTRAP_TMPDIR}/packages.${architecture}" \
         "${REPO_BASE_URL}/dists/stable/main/binary-${architecture}/Packages"; then

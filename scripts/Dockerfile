@@ -14,9 +14,12 @@ COPY ./setup-ubuntu.sh ./setup-android-sdk.sh ./properties.sh /tmp/
 RUN mkdir /tmp/build
 COPY ./build/termux_download.sh /tmp/build/
 
+RUN sed -i -re 's/([a-z]{2}\.)?archive.ubuntu.com|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+
 # Setup needed packages and the Android SDK and NDK:
 RUN apt-get update && \
 	apt-get -yq upgrade && \
+	apt-get -yq dist-upgrade && \
 	apt-get install -yq sudo lsb-release software-properties-common && \
 	adduser --disabled-password --shell /bin/bash --gecos "" builder && \
 	echo "builder ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/builder && \

@@ -3,7 +3,7 @@ TERMUX_PKG_DESCRIPTION="Front-end for the dpkg package manager"
 TERMUX_PKG_LICENSE="GPL-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
 TERMUX_PKG_VERSION=2.5.0
-TERMUX_PKG_SRCURL=https://deb.debian.org/debian/pool/main/a/apt/apt_${TERMUX_PKG_VERSION}.tar.xz
+TERMUX_PKG_SRCURL=https://launchpadlibrarian.net/601900510/apt_${TERMUX_PKG_VERSION}.tar.xz
 TERMUX_PKG_SHA256=61cd84d04e2a7858f70dca21160977479c74150853cdeef7c843d59e72488c1f
 # apt-key requires utilities from coreutils, findutils, gpgv, grep, sed.
 TERMUX_PKG_DEPENDS="coreutils, dpkg, findutils, gpgv, grep, libandroid-glob, libbz2, libc++, libcurl, libgnutls, liblz4, liblzma, sed, termux-keyring, termux-licenses, xxhash, zlib"
@@ -71,9 +71,9 @@ termux_step_pre_configure() {
 termux_step_post_make_install() {
 	{
 		echo "# The main termux repository, behind cloudflare cache:"
-		echo "deb https://apthero.sgp1.cdn.digitaloceanspaces.com/dpkg/ stable main"
+		echo "deb https://helloanwar.com/neptune-terminal-repo/dpkg/ stable main"
 		echo "# The main termux repository:"
-		echo "# deb https://apthero.sgp1.cdn.digitaloceanspaces.com/dpkg/ stable main"
+		echo "# deb https://helloanwar.com/neptune-terminal-repo/dpkg/ stable main"
 	} > $TERMUX_PREFIX/etc/apt/sources.list
 
 	# apt-transport-tor

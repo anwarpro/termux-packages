@@ -76,7 +76,7 @@ last_modified() {
 }
 
 select_mirror() {
-	local main_repo="https://apthero.sgp1.cdn.digitaloceanspaces.com/dpkg"
+	local main_repo="https://helloanwar.com/neptune-terminal-repo/dpkg"
 
 	declare -A mirrors
 	mirrors[16]="$main_repo"
