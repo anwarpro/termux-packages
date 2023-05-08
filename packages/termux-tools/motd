@@ -1,6 +1,7 @@
 
 If you are facing keyboard issue
-use Gboard or other device available keyboard
+use Gboard or for avro keyboard follow this instruction
+https://www.programming-hero.com/terminal-help
 
 Working with packages:
 
@@ -8,5 +9,5 @@ Working with packages:
  * Install a package: pkg install <package>
  * Upgrade packages:  pkg upgrade
 
-Currently you can Only install (python, nodejs, nodejs-lts)
+Currently you can Only install (python, nodejs, nodejs-lts, git)
 
