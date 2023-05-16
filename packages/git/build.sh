@@ -90,6 +90,15 @@ termux_step_post_make_install() {
 	# Remove duplicated binaries in bin/ with symlink to the one in libexec/git-core:
 	(cd $TERMUX_PREFIX/bin; ln -s -f ../libexec/git-core/git git)
 	(cd $TERMUX_PREFIX/bin; ln -s -f ../libexec/git-core/git-upload-pack git-upload-pack)
+
+	if [ ! -z "$NATIVE_DIR" ]; then
+	  rm "$TERMUX_PREFIX/libexec/git-core/git"
+	  rm "$TERMUX_PREFIX/libexec/git-core/git-remote-http"
+
+    ln -s $NATIVE_DIR/liblibexec_git-core_git.so "$TERMUX_PREFIX/libexec/git-core/git"
+    ln -s $NATIVE_DIR/liblibexec_git-core_git-remote-http.so "$TERMUX_PREFIX/libexec/git-core/git-remote-http"
+	fi
+
 }
 
 termux_step_post_massage() {
