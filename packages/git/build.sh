@@ -41,6 +41,8 @@ share/man/man1/git-cvsserver.1
 share/man/man1/git-shell.1
 "
 
+NATIVE_DIR="\$NATIVE_DIR"
+
 termux_step_pre_configure() {
 	# Certain packages are not safe to build on device because their
 	# build.sh script deletes specific files in $TERMUX_PREFIX.
