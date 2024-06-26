@@ -48,7 +48,7 @@ export CGCT_DIR="/data/data/${TERMUX_APP_PACKAGE}/cgct"
 # Package name for the packages hosted on the repo.
 # This must only equal TERMUX_APP_PACKAGE if using custom repo that
 # has packages that were built with same package name.
-TERMUX_REPO_PACKAGE="com.termux"
+TERMUX_REPO_PACKAGE="com.learnprogramming.codecamp"
 
 # Termux repo urls.
 TERMUX_REPO_URL=()
