@@ -359,6 +359,9 @@ while (($# > 0)); do
 		--android10)
 			BOOTSTRAP_ANDROID10_COMPATIBLE=true
 			;;
+	  --onlyadditional)
+      ONLY_ADDITIONAL=true
+			;;
 		-a|--add)
 			if [ $# -gt 1 ] && [ -n "$2" ] && [[ $2 != -* ]]; then
 				for pkg in $(echo "$2" | tr ',' ' '); do
