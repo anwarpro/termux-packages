@@ -12,6 +12,7 @@ trap 'rm -rf $BOOTSTRAP_TMPDIR' EXIT
 # By default, bootstrap archives are compatible with Android >=7.0
 # and <10.
 BOOTSTRAP_ANDROID10_COMPATIBLE=false
+ONLY_ADDITIONAL=false
 
 # By default, bootstrap archives will be built for all architectures
 # supported by Termux application.
