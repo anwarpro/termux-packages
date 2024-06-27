@@ -1,8 +1,8 @@
 # keep repology-metadata in sync with this
 
-TERMUX_SDK_REVISION=7583922
-TERMUX_ANDROID_BUILD_TOOLS_VERSION=30.0.3
-TERMUX_NDK_VERSION_NUM=23
+TERMUX_SDK_REVISION=9123335
+TERMUX_ANDROID_BUILD_TOOLS_VERSION=33.0.1
+TERMUX_NDK_VERSION_NUM=26
 TERMUX_NDK_REVISION="b"
 TERMUX_NDK_VERSION=$TERMUX_NDK_VERSION_NUM$TERMUX_NDK_REVISION
 # when changing the above:
@@ -11,7 +11,7 @@ TERMUX_NDK_VERSION=$TERMUX_NDK_VERSION_NUM$TERMUX_NDK_REVISION
 # update SHA256 sums in scripts/setup-android-sdk.sh
 # check all packages build and run correctly and bump if needed
 
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 if [ "${TERMUX_PACKAGES_OFFLINE-false}" = "true" ]; then
 	export ANDROID_HOME=${TERMUX_SCRIPTDIR}/build-tools/android-sdk-$TERMUX_SDK_REVISION
