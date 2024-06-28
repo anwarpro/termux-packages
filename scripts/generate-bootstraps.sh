@@ -24,7 +24,7 @@ TERMUX_PACKAGE_MANAGERS=("apt" "pacman")
 
 # The repository base urls mapping for package managers.
 declare -A REPO_BASE_URLS=(
-  ["apt"]="https://apthero.sgp1.cdn.digitaloceanspaces.com/neptune"
+  ["apt"]="https://apthero.sgp1.cdn.digitaloceanspaces.com/dpkg"
   ["pacman"]="https://s3.amazonaws.com/termux-main.pacman"
 )
 

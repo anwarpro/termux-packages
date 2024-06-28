@@ -71,9 +71,9 @@ termux_step_pre_configure() {
 termux_step_post_make_install() {
 	{
 		echo "# The main termux repository, behind cloudflare cache:"
-		echo "deb https://apthero.sgp1.cdn.digitaloceanspaces.com/neptune/ stable main"
+		echo "deb https://apthero.sgp1.cdn.digitaloceanspaces.com/dpkg/ stable main"
 		echo "# The main termux repository:"
-		echo "# deb https://apthero.sgp1.cdn.digitaloceanspaces.com/neptune/ stable main"
+		echo "# deb https://apthero.sgp1.cdn.digitaloceanspaces.com/dpkg/ stable main"
 	} > $TERMUX_PREFIX/etc/apt/sources.list
 
 	# apt-transport-tor
