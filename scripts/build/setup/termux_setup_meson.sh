@@ -23,7 +23,7 @@ termux_setup_meson() {
 			termux_download \
 				"https://github.com/mesonbuild/meson/commit/266e8acb5807b38a550cb5145cea0e19545a21d7.patch" \
 				"$MESON_0_61_2_GTKDOC_PATCH_FILE" \
-				79ecf0e16f613396f43621a928df6c17e6260aa190c320e5c01adad94abd07ad
+				a25668672206991d15b18fa952859503672ac2814ae02605e0c7c90d7f918030
 			patch --silent -p1 -d "$MESON_TMP_FOLDER" < "$MESON_0_61_2_GTKDOC_PATCH_FILE"
 		fi
 		mv "$MESON_TMP_FOLDER" "$MESON_FOLDER"
