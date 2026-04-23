@@ -1,11 +1,10 @@
 TERMUX_PKG_HOMEPAGE="https://dandavison.github.io/delta/"
 TERMUX_PKG_DESCRIPTION="A syntax-highlighter for git and diff output"
 TERMUX_PKG_LICENSE="MIT"
-TERMUX_PKG_MAINTAINER="Joshua Kahn @TomJo2000"
-TERMUX_PKG_VERSION="0.17.0"
-TERMUX_PKG_REVISION=1
-TERMUX_PKG_SRCURL=https://github.com/dandavison/delta/archive/${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=1abd21587bcc1f2ef0cd342784ce990da9978bc345578e45506419e0952de714
+TERMUX_PKG_MAINTAINER="Joshua Kahn <tom@termux.dev>"
+TERMUX_PKG_VERSION="0.19.2"
+TERMUX_PKG_SRCURL=https://github.com/dandavison/delta/archive/refs/tags/${TERMUX_PKG_VERSION}.tar.gz
+TERMUX_PKG_SHA256=f59b86f8c8dda4d76a3ba34b8553777a20c3b461646917d8e480fac6531bba9f
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="git, libgit2, oniguruma"
 TERMUX_PKG_BUILD_IN_SRC=true
@@ -13,7 +12,6 @@ TERMUX_PKG_BUILD_IN_SRC=true
 termux_step_pre_configure() {
 	export LIBGIT2_SYS_USE_PKG_CONFIG=1
 	export RUSTONIG_SYSTEM_LIBONIG=1
-	export PKG_CONFIG_ALLOW_CROSS=1
 
 	rm -f Makefile release.Makefile
 	export CC_x86_64_unknown_linux_gnu=gcc

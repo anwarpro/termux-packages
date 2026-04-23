@@ -2,8 +2,29 @@ TERMUX_PKG_HOMEPAGE=https://railway.app
 TERMUX_PKG_DESCRIPTION="This is the command line interface for Railway"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="3.9.3"
-TERMUX_PKG_SRCURL=https://github.com/railwayapp/cli/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=3ee72e6fb07e28b6f1908624386b7fc89d9da78594028764e21b8b97cf78d8da
+TERMUX_PKG_VERSION="4.40.2"
+TERMUX_PKG_SRCURL="https://github.com/railwayapp/cli/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
+TERMUX_PKG_SHA256=3c042102ac6b81894ee8410913313ecd1ef2e9683670c7c1d3f8b55f32442bb1
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
+
+termux_step_pre_configure() {
+	termux_setup_rust
+
+	cargo vendor
+	find ./vendor \
+		-mindepth 1 -maxdepth 1 -type d \
+		! -wholename ./vendor/arboard \
+		! -wholename ./vendor/x11rb-protocol \
+		-exec rm -rf '{}' \;
+
+	find vendor/{arboard,x11rb-protocol} -type f -print0 | \
+		xargs -0 sed -i \
+		-e 's|android|disabling_this_because_it_is_for_building_an_apk|g' \
+		-e "s|/tmp|$TERMUX_PREFIX/tmp|g"
+
+	echo "" >> Cargo.toml
+	echo '[patch.crates-io]' >> Cargo.toml
+	echo "arboard = { path = \"./vendor/arboard\" }" >> Cargo.toml
+	echo "x11rb-protocol = { path = \"./vendor/x11rb-protocol\" }" >> Cargo.toml
+}

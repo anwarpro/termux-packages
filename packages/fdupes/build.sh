@@ -2,9 +2,10 @@ TERMUX_PKG_HOMEPAGE=https://github.com/adrianlopezroche/fdupes
 TERMUX_PKG_DESCRIPTION="Duplicates file detector"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2.3.1"
-TERMUX_PKG_SRCURL=https://github.com/adrianlopezroche/fdupes/archive/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=fbf0a455d398d2bfeb86da832d736557a6ee09d0b1456b869698dc43c5cf5072
+TERMUX_PKG_VERSION="2.4.0"
+TERMUX_PKG_REVISION=1
+TERMUX_PKG_SRCURL=https://github.com/adrianlopezroche/fdupes/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
+TERMUX_PKG_SHA256=2a11250ef0e9d82837dcf336853b2891732cc78e2888ccdc6b689ab7b47b0f5b
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="libsqlite, ncurses, pcre2"
 

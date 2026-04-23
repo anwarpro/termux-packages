@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://github.com/svenstaro/miniserve
 TERMUX_PKG_DESCRIPTION="Tool to serve files and dirs over HTTP"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.27.1"
-TERMUX_PKG_SRCURL=https://github.com/svenstaro/miniserve/archive/v$TERMUX_PKG_VERSION.tar.gz
-TERMUX_PKG_SHA256=b65580574ca624072b1a94d59ebf201ab664eacacb46a5043ef7b81ebb538f80
+TERMUX_PKG_VERSION="0.35.0"
+TERMUX_PKG_SRCURL=https://github.com/svenstaro/miniserve/archive/refs/tags/v$TERMUX_PKG_VERSION.tar.gz
+TERMUX_PKG_SHA256=8ae108c161f2ed740f8c4b4dfd0a80805adcbaf7a05a6128f2b4d8f5093f5490
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_BUILD_IN_SRC=true
 

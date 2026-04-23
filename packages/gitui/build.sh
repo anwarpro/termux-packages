@@ -1,21 +1,31 @@
-TERMUX_PKG_HOMEPAGE=https://github.com/extrawurst/gitui
+# Contributor: @PeroSar
+TERMUX_PKG_HOMEPAGE=https://github.com/gitui-org/gitui
 TERMUX_PKG_DESCRIPTION="Blazing fast terminal-ui for git written in rust"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_LICENSE_FILE="LICENSE.md"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.26.3"
-TERMUX_PKG_SRCURL=https://github.com/extrawurst/gitui/archive/v$TERMUX_PKG_VERSION.tar.gz
-TERMUX_PKG_SHA256=8075e180f3b01ff0c290b690488a7628c44b4de12346e04a77d823914a48918b
+TERMUX_PKG_VERSION="0.28.1"
+TERMUX_PKG_SRCURL=https://github.com/gitui-org/gitui/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
+TERMUX_PKG_SHA256=0400cbf59605490b5fb8779f9af41fa4d7a1bb748093ca0e13156a5dff31c7aa
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_DEPENDS="git, libgit2, libssh2, openssl"
+TERMUX_PKG_DEPENDS="libgit2, libssh2, openssl, zlib"
 TERMUX_PKG_BUILD_IN_SRC=true
 
 termux_step_pre_configure() {
-	CPPFLAGS+=" -Dindex=strchr"
 	export OPENSSL_NO_VENDOR=1
+	# export LIBGIT2_NO_VENDOR=1
 	export LIBGIT2_SYS_USE_PKG_CONFIG=1
 	export LIBSSH2_SYS_USE_PKG_CONFIG=1
-	export PKG_CONFIG_ALLOW_CROSS=1
+
+	termux_setup_cmake
+
+	# Dummy CMake toolchain file to workaround build error:
+	# error: failed to run custom build command for `libz-ng-sys v1.1.21`
+	# ...
+	# CMake Error at /home/builder/.termux-build/_cache/cmake-3.31.1/share/cmake-3.31/Modules/Platform/Android-Determine.cmake:218 (message):
+	# Android: Neither the NDK or a standalone toolchain was found.
+	export TARGET_CMAKE_TOOLCHAIN_FILE="${TERMUX_PKG_BUILDDIR}/android.toolchain.cmake"
+	touch "${TERMUX_PKG_BUILDDIR}/android.toolchain.cmake"
 
 	termux_setup_rust
 	: "${CARGO_HOME:=$HOME/.cargo}"

@@ -5,6 +5,7 @@
 
 set -e
 
+export TERMUX_SCRIPTDIR=$(realpath "$(dirname "$(realpath "$0")")/../")
 . $(dirname "$(realpath "$0")")/properties.sh
 BOOTSTRAP_TMPDIR=$(mktemp -d "${TMPDIR:-/tmp}/bootstrap-tmp.XXXXXXXX")
 trap 'rm -rf $BOOTSTRAP_TMPDIR' EXIT
@@ -24,7 +25,7 @@ TERMUX_PACKAGE_MANAGERS=("apt" "pacman")
 # The repository base urls mapping for package managers.
 declare -A REPO_BASE_URLS=(
 	["apt"]="https://packages-cf.termux.dev/apt/termux-main"
-	["pacman"]="https://service.termux-pacman.dev/main"
+	["pacman"]="https://sync.termux-pacman.dev/main"
 )
 
 # The package manager that will be installed in bootstrap.
@@ -110,7 +111,7 @@ print_desc_package_pac() {
 	echo -e "%${1}%\n${2}\n"
 }
 
-# Download specified package, its depenencies and then extract *.deb or *.pkg.tar.xz files to
+# Download specified package, its dependencies and then extract *.deb or *.pkg.tar.xz files to
 # the bootstrap root.
 pull_package() {
 	local package_name=$1
@@ -251,22 +252,26 @@ add_termux_bootstrap_second_stage_files() {
 
 	echo "[*] Adding termux bootstrap second stage files..."
 
-	mkdir -p "${BOOTSTRAP_ROOTFS}/${TERMUX_BOOTSTRAP_CONFIG_DIR_PATH}"
+	mkdir -p "${BOOTSTRAP_ROOTFS}/${TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_DIR}"
 	sed -e "s|@TERMUX_PREFIX@|${TERMUX_PREFIX}|g" \
-		-e "s|@TERMUX_BOOTSTRAP_CONFIG_DIR_PATH@|${TERMUX_BOOTSTRAP_CONFIG_DIR_PATH}|g" \
+		-e "s|@TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_DIR@|${TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_DIR}|g" \
+		-e "s|@TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_ENTRY_POINT_SUBFILE@|${TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_ENTRY_POINT_SUBFILE}|g" \
 		-e "s|@TERMUX_PACKAGE_MANAGER@|${TERMUX_PACKAGE_MANAGER}|g" \
 		-e "s|@TERMUX_PACKAGE_ARCH@|${package_arch}|g" \
-		"$(dirname "$(realpath "$0")")/bootstrap/termux-bootstrap-second-stage.sh" \
-		> "${BOOTSTRAP_ROOTFS}/${TERMUX_BOOTSTRAP_CONFIG_DIR_PATH}/termux-bootstrap-second-stage.sh"
-	chmod 700 "${BOOTSTRAP_ROOTFS}/${TERMUX_BOOTSTRAP_CONFIG_DIR_PATH}/termux-bootstrap-second-stage.sh"
+		-e "s|@TERMUX_APP__NAME@|${TERMUX_APP__NAME}|g" \
+		-e "s|@TERMUX_ENV__S_TERMUX@|${TERMUX_ENV__S_TERMUX}|g" \
+		"$TERMUX_SCRIPTDIR/scripts/bootstrap/$TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_ENTRY_POINT_SUBFILE" \
+		> "${BOOTSTRAP_ROOTFS}/${TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_DIR}/$TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_ENTRY_POINT_SUBFILE"
+	chmod 700 "${BOOTSTRAP_ROOTFS}/${TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_DIR}/$TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_ENTRY_POINT_SUBFILE"
 
 	# TODO: Remove it when Termux app supports `pacman` bootstraps installation.
 	sed -e "s|@TERMUX_PREFIX@|${TERMUX_PREFIX}|g" \
-		-e "s|@TERMUX_PROFILE_D_PREFIX_DIR_PATH@|${TERMUX_PROFILE_D_PREFIX_DIR_PATH}|g" \
-		-e "s|@TERMUX_BOOTSTRAP_CONFIG_DIR_PATH@|${TERMUX_BOOTSTRAP_CONFIG_DIR_PATH}|g" \
-		"$(dirname "$(realpath "$0")")/bootstrap/01-termux-bootstrap-second-stage-fallback.sh" \
-		> "${BOOTSTRAP_ROOTFS}/${TERMUX_PROFILE_D_PREFIX_DIR_PATH}/01-termux-bootstrap-second-stage-fallback.sh"
-	chmod 600 "${BOOTSTRAP_ROOTFS}/${TERMUX_PROFILE_D_PREFIX_DIR_PATH}/01-termux-bootstrap-second-stage-fallback.sh"
+		-e "s|@TERMUX__PREFIX__PROFILE_D_DIR@|${TERMUX__PREFIX__PROFILE_D_DIR}|g" \
+		-e "s|@TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_DIR@|${TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_DIR}|g" \
+		-e "s|@TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_ENTRY_POINT_SUBFILE@|${TERMUX_BOOTSTRAP__BOOTSTRAP_SECOND_STAGE_ENTRY_POINT_SUBFILE}|g" \
+		"$TERMUX_SCRIPTDIR/scripts/bootstrap/01-termux-bootstrap-second-stage-fallback.sh" \
+		> "${BOOTSTRAP_ROOTFS}/${TERMUX__PREFIX__PROFILE_D_DIR}/01-termux-bootstrap-second-stage-fallback.sh"
+	chmod 600 "${BOOTSTRAP_ROOTFS}/${TERMUX__PREFIX__PROFILE_D_DIR}/01-termux-bootstrap-second-stage-fallback.sh"
 
 }
 
@@ -465,6 +470,7 @@ for package_arch in "${TERMUX_ARCHITECTURES[@]}"; do
 	pull_package psmisc
 	pull_package sed
 	pull_package tar
+	pull_package termux-core
 	pull_package termux-exec
 	pull_package termux-keyring
 	pull_package termux-tools

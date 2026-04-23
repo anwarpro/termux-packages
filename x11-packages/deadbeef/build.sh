@@ -3,12 +3,11 @@ TERMUX_PKG_DESCRIPTION="A modular cross-platform audio player"
 TERMUX_PKG_LICENSE="ZLIB, GPL-2.0, LGPL-2.1, BSD 3-Clause, MIT"
 TERMUX_PKG_LICENSE_FILE="COPYING"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.9.6"
-TERMUX_PKG_REVISION=1
-TERMUX_PKG_SRCURL=https://downloads.sourceforge.net/deadbeef/deadbeef-${TERMUX_PKG_VERSION}.tar.bz2
-TERMUX_PKG_SHA256=9d77b3d8afdeab5027d24bd18e9cfc04ce7d6ab3ddc043cc8e84c82b41b79c04
+TERMUX_PKG_VERSION="1.10.2"
+TERMUX_PKG_SRCURL=https://downloads.sourceforge.net/deadbeef/Builds/${TERMUX_PKG_VERSION}/linux/deadbeef-${TERMUX_PKG_VERSION}.tar.bz2
+TERMUX_PKG_SHA256=dd951e83e0069e2f3df18985dd40d2cf9409f502b0ecaaf1ac229d5009a8e698
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_DEPENDS="atk, dbus, ffmpeg, gdk-pixbuf, glib, gtk3, harfbuzz, libblocksruntime, libc++, libcairo, libcurl, libdispatch, libflac, libiconv, libjansson, libmad, libogg, libsamplerate, libsndfile, libvorbis, libwavpack, libx11, libzip, mpg123, opusfile, pango, pulseaudio, zlib"
+TERMUX_PKG_DEPENDS="atk, dbus, ffmpeg, gdk-pixbuf, glib, gtk3, harfbuzz, libblocksruntime, libc++, libcairo, libcurl, libdispatch, libflac, libiconv, libjansson, libmad, libogg, libsamplerate, libsndfile, libvorbis, libwavpack, libx11, libzip, libmpg123, opusfile, pango, pulseaudio, zlib"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 ax_cv_c_flags__msse2=no
 --disable-ffap
@@ -20,7 +19,12 @@ termux_step_pre_configure() {
 	autoreconf -fi
 
 	CPPFLAGS+=" -Wno-implicit-function-declaration -D_FILE_OFFSET_BITS=64"
-	LDFLAGS+=" -lm $($CC -print-libgcc-file-name)"
+
+	# ERROR: ./lib/deadbeef/adplug.so contains undefined symbols: __extendsftf2
+	local _libgcc_file="$($CC -print-libgcc-file-name)"
+	local _libgcc_path="$(dirname $_libgcc_file)"
+	local _libgcc_name="$(basename $_libgcc_file)"
+	LDFLAGS+=" -lm -L$_libgcc_path -l:$_libgcc_name"
 
 	rm -rf intl
 	mkdir -p intl

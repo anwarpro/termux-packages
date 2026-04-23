@@ -2,11 +2,15 @@ TERMUX_PKG_HOMEPAGE=https://github.com/topgrade-rs/topgrade/
 TERMUX_PKG_DESCRIPTION="Upgrade all the things"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="14.0.1"
-TERMUX_PKG_SRCURL="https://github.com/topgrade-rs/topgrade/archive/v${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=e4262fae2c89efe889b5a3533dc25d35dd3fbaf373091170f20bcc852017e8be
+TERMUX_PKG_VERSION="17.3.0"
+TERMUX_PKG_SRCURL="https://github.com/topgrade-rs/topgrade/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
+TERMUX_PKG_SHA256=98f0fcbbaf201ef0442533e5fdc3fd047ae61767f28b197bb4e8bd6047a90c22
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_BUILD_IN_SRC=true
+
+termux_step_pre_configure() {
+	termux_setup_rust
+}
 
 termux_step_post_get_source() {
 	rm -f pyproject.toml

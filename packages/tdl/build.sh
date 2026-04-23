@@ -3,15 +3,22 @@ TERMUX_PKG_DESCRIPTION="Telegram downloader/tools written in Golang"
 TERMUX_PKG_LICENSE="AGPL-V3"
 TERMUX_PKG_LICENSE_FILE="LICENSE"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.17.2"
+TERMUX_PKG_VERSION="0.20.2"
 TERMUX_PKG_SRCURL=https://github.com/iyear/tdl/archive/refs/tags/v$TERMUX_PKG_VERSION.tar.gz
-TERMUX_PKG_SHA256=79b171fead97b26ab5b4b643a20a236d634eed46dbcf85cc55ec28ff190a27ea
+TERMUX_PKG_SHA256=61b518929c05f5eb36386bb5d01fc85ff1c1956223592a52feda47f15faaa5fc
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
 
 termux_step_make() {
 	termux_setup_golang
-	go build
+	read commit_hash commit_date <<<"$(
+		curl -s "https://api.github.com/repos/iyear/tdl/commits/v${TERMUX_PKG_VERSION}" \
+			| jq -r '[.sha, .commit.committer.date] | "\(.[0][0:7]) \(.[1])"'
+	)"
+	local _ldflags="-s -w -X github.com/iyear/tdl/pkg/consts.Version=${TERMUX_PKG_VERSION}"
+	_ldflags+=" -X github.com/iyear/tdl/pkg/consts.Commit=${commit_hash}"
+	_ldflags+=" -X github.com/iyear/tdl/pkg/consts.CommitDate=${commit_date}"
+	go build --ldflags="$_ldflags"
 }
 
 termux_step_make_install() {

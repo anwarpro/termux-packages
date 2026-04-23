@@ -1,13 +1,13 @@
-TERMUX_PKG_HOMEPAGE=http://www.gnustep.org
+TERMUX_PKG_HOMEPAGE=https://www.gnustep.org
 TERMUX_PKG_DESCRIPTION="A library of general-purpose, non-graphical Objective C objects"
 TERMUX_PKG_LICENSE="GPL-2.0, LGPL-2.1"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.30.0"
-TERMUX_PKG_SRCURL=https://github.com/gnustep/libs-base/releases/download/base-${TERMUX_PKG_VERSION//./_}/gnustep-base-${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=00b5bc4179045b581f9f9dc3751b800c07a5d204682e3e0eddd8b5e5dee51faa
+TERMUX_PKG_VERSION="1.31.1"
+TERMUX_PKG_REVISION=4
+TERMUX_PKG_SRCURL="https://github.com/gnustep/libs-base/releases/download/base-${TERMUX_PKG_VERSION//./_}/gnustep-base-${TERMUX_PKG_VERSION}.tar.gz"
+TERMUX_PKG_SHA256=e7546f1c978a7c75b676953a360194a61e921cb45a4804497b4f346a460545cd
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_UPDATE_VERSION_REGEXP='(?<=-).+'
-TERMUX_PKG_DEPENDS="gnustep-make, libc++, libffi, libgmp, libgnutls, libiconv, libicu, libxml2, libxslt, zlib"
+TERMUX_PKG_DEPENDS="gnustep-make, libcurl, libc++, libffi, libgmp, libgnutls, libiconv, libicu, libxml2, libxslt, zlib"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --with-default-config=$TERMUX_PREFIX/etc/GNUstep/GNUstep.conf
@@ -39,21 +39,6 @@ ac_cv_func_setpgrp_void=yes
 "
 
 termux_step_pre_configure() {
-	local bin="$TERMUX_PKG_BUILDDIR/bin"
-	mkdir -p "$bin"
-	local sh="$(command -v sh)"
-	for cmd in CC CPP CXX; do
-		local wrapper="$bin/$(basename $(eval echo \${$cmd}))"
-		cat > "$wrapper" <<-EOF
-			#!${sh}
-			unset LD_PRELOAD
-			unset LD_LIBRARY_PATH
-			exec $(command -v $(eval echo \${$cmd})) "\$@"
-		EOF
-		chmod 0700 "$wrapper"
-	done
-	export PATH="$bin":$PATH
-
-	rm -f cross.config
+	rm cross.config
 	touch cross.config
 }

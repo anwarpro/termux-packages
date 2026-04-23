@@ -2,17 +2,17 @@ TERMUX_PKG_HOMEPAGE=https://github.com/kcleal/gw
 TERMUX_PKG_DESCRIPTION="A browser for genomic sequencing data (.bam/.cram format)"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="clealk@cardiff.ac.uk"
-TERMUX_PKG_VERSION=0.9.3
+TERMUX_PKG_VERSION="1.2.6"
 TERMUX_PKG_REVISION=1
-TERMUX_PKG_SRCURL=https://github.com/kcleal/gw/archive/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=43445ef6d96bd8a09a9a45cd18e21481d7fefe7e9ab26aec4abd8d1f4bff3fcd
-TERMUX_PKG_DEPENDS="glfw, htslib, libc++, libjpeg-turbo, opengl"
-TERMUX_PKG_BUILD_DEPENDS="fontconfig, freetype, libicu, libuuid, mesa-dev"
+TERMUX_PKG_SRCURL=https://github.com/kcleal/gw/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
+TERMUX_PKG_SHA256=4ab7afc7c8785f956e9ee32c984a5f69c4671d3025d53493a5cd9e295701dad0
+TERMUX_PKG_DEPENDS="glfw, htslib, libc++, libjpeg-turbo, opengl, libcurl"
+TERMUX_PKG_BUILD_DEPENDS="fontconfig, freetype, libicu, libuuid, mesa-dev, libcurl"
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_BUILD_IN_SRC=true
 
 # htslib is not available for arm.
-TERMUX_PKG_BLACKLISTED_ARCHES="arm"
+TERMUX_PKG_EXCLUDED_ARCHES="arm"
 
 termux_step_pre_configure() {
 	LDFLAGS+=" -llog"
@@ -55,7 +55,7 @@ termux_step_make() {
 	unzip -o "${TERMUX_PKG_CACHEDIR}/skia-${TERMUX_ARCH}.zip"
 	cd ../../
 
-	make -j "$TERMUX_PKG_MAKE_PROCESSES"
+	OLD_SKIA=1 make -j "$TERMUX_PKG_MAKE_PROCESSES"
 }
 
 termux_step_make_install() {

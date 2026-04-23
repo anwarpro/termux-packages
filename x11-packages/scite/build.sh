@@ -1,12 +1,11 @@
 TERMUX_PKG_HOMEPAGE=https://www.scintilla.org/SciTE.html
 TERMUX_PKG_DESCRIPTION="A free source code editor"
-# License: HPND
-TERMUX_PKG_LICENSE="custom"
+TERMUX_PKG_LICENSE="HPND"
 TERMUX_PKG_LICENSE_FILE="scite/License.txt"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="5.5.0"
+TERMUX_PKG_VERSION="5.6.1"
 TERMUX_PKG_SRCURL=https://www.scintilla.org/scite${TERMUX_PKG_VERSION//./}.tgz
-TERMUX_PKG_SHA256=f7726a57be521f71c81b4fcc6d171fbf4a62e08c1c1840f5a74e014f3607ee11
+TERMUX_PKG_SHA256=06e9dee41d2ffd67d6c4580cd1ca8eb543a12833cb5895ca50aec929c9194bf0
 TERMUX_PKG_DEPENDS="at-spi2-core, gdk-pixbuf, glib, gtk3, libc++, libcairo, pango"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true

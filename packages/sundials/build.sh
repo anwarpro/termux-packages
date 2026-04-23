@@ -1,10 +1,10 @@
 TERMUX_PKG_HOMEPAGE=https://computing.llnl.gov/projects/sundials
 TERMUX_PKG_DESCRIPTION="SUite of Nonlinear and DIfferential/ALgebraic equation Solvers."
 TERMUX_PKG_LICENSE="BSD 3-Clause"
-TERMUX_PKG_MAINTAINER="@termux-user-repository"
-TERMUX_PKG_VERSION="7.1.0"
-TERMUX_PKG_SRCURL=https://github.com/LLNL/sundials/releases/download/v${TERMUX_PKG_VERSION}/sundials-${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=17f03e49fef54c89bd84a9769743fbf108c003e23ad0abc11fd4d0c0f4c74bf9
+TERMUX_PKG_MAINTAINER="@termux"
+TERMUX_PKG_VERSION="2:7.7.0"
+TERMUX_PKG_SRCURL=https://github.com/LLNL/sundials/releases/download/v${TERMUX_PKG_VERSION#*:}/sundials-${TERMUX_PKG_VERSION#*:}.tar.gz
+TERMUX_PKG_SHA256=115bebf25ad0380428e389b8a1a7896725f33cd7c98bbaec8ce2a9ae13812c46
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="suitesparse"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
@@ -25,8 +25,12 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DENABLE_PTHREAD=ON
 -DEXAMPLES_INSTALL=OFF
 "
-TERMUX_PKG_BLACKLISTED_ARCHES="arm, i686"
+TERMUX_PKG_EXCLUDED_ARCHES="arm, i686"
 TERMUX_PKG_RM_AFTER_INSTALL="examples/"
+
+termux_step_pre_configure() {
+	LDFLAGS+=" -fopenmp -static-openmp"
+}
 
 termux_step_post_massage() {
 	# Do not forget to bump revision of reverse dependencies and rebuild them

@@ -2,17 +2,16 @@ TERMUX_PKG_HOMEPAGE=https://mariadb.org
 TERMUX_PKG_DESCRIPTION="A drop-in replacement for mysql server"
 TERMUX_PKG_LICENSE="GPL-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2:11.4.2"
-TERMUX_PKG_REVISION=1
-TERMUX_PKG_SRCURL=https://mirror.netcologne.de/mariadb/mariadb-${TERMUX_PKG_VERSION#*:}/source/mariadb-${TERMUX_PKG_VERSION#*:}.tar.gz
-TERMUX_PKG_SHA256=8c600e38adb899316c1cb11c68b87979668f4fb9d858000e347e6d8b7abe51b0
-TERMUX_PKG_DEPENDS="libandroid-support, libc++, libcrypt, libedit, liblz4, liblzma, ncurses, openssl, pcre2, zlib, zstd"
+TERMUX_PKG_VERSION="2:12.2.2"
+TERMUX_PKG_SRCURL=https://archive.mariadb.org/mariadb-${TERMUX_PKG_VERSION#*:}/source/mariadb-${TERMUX_PKG_VERSION#*:}.tar.gz
+TERMUX_PKG_SHA256=fe82fe2e9af98dfcad8c0266a283ca349b78fd46989fff0d5e1ffca644b514bd
+TERMUX_PKG_DEPENDS="libandroid-support, libbz2, libc++, libcrypt, libedit, liblz4, libxml2, liblzma, ncurses, openssl, pcre2, zlib, zstd"
 TERMUX_PKG_BREAKS="mariadb-dev"
 TERMUX_PKG_CONFLICTS="mysql"
 TERMUX_PKG_REPLACES="mariadb-dev"
 TERMUX_PKG_SERVICE_SCRIPT=("mysqld" "exec mysqld --basedir=$TERMUX_PREFIX --datadir=$TERMUX_PREFIX/var/lib/mysql 2>&1")
 TERMUX_PKG_HOSTBUILD=true
-TERMUX_CMAKE_BUILD="Unix Makefiles"
+TERMUX_PKG_CMAKE_BUILD="Unix Makefiles"
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DBISON_EXECUTABLE=$(command -v bison)
@@ -20,6 +19,7 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DBUILD_CONFIG=mysql_release
 -DCAT_EXECUTABLE=$(command -v cat)
 -DGIT_EXECUTABLE=$(command -v git)
+-DHAVE_SYSTEM_LIBFMT_EXITCODE=0
 -DGSSAPI_FOUND=NO
 -DGRN_WITH_LZ4=yes
 -DENABLED_LOCAL_INFILE=ON
@@ -65,7 +65,7 @@ TERMUX_PKG_RM_AFTER_INSTALL="
 bin/rcmysql
 bin/mysqltest*
 share/man/man1/mysql-test-run.pl.1
-share/mysql/mysql-test
+share/mariadb/mariadb-test
 mysql-test
 sql-bench
 "
@@ -88,6 +88,7 @@ termux_step_pre_configure() {
 	fi
 
 	CPPFLAGS+=" -Dushort=u_short"
+	CXXFLAGS+=" -Wno-register"
 
 	if [ $TERMUX_ARCH_BITS = 32 ]; then
 		CPPFLAGS+=" -D__off64_t_defined"
@@ -100,6 +101,9 @@ termux_step_pre_configure() {
 
 termux_step_post_massage() {
 	mkdir -p $TERMUX_PKG_MASSAGEDIR/$TERMUX_PREFIX/etc/my.cnf.d
+
+	# move vendored groonga docs to resolve file conflict with groonga
+	mv $TERMUX_PKG_MASSAGEDIR/$TERMUX_PREFIX/share/{groonga{,-normalizer-mysql},doc/mariadb/}
 }
 
 termux_step_create_debscripts() {

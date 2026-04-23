@@ -2,12 +2,11 @@ TERMUX_PKG_HOMEPAGE=https://www.erlang.org/
 TERMUX_PKG_DESCRIPTION="General-purpose concurrent functional programming language"
 TERMUX_PKG_LICENSE="Apache-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="27.0"
-TERMUX_PKG_REVISION=1
+TERMUX_PKG_VERSION="28.4.3"
 TERMUX_PKG_SRCURL=https://github.com/erlang/otp/archive/refs/tags/OTP-$TERMUX_PKG_VERSION.tar.gz
-TERMUX_PKG_SHA256=5c8ad9143ee81c26aae4699c4bc64f76c5e838efb778f988ad9bb1305f505fed
+TERMUX_PKG_SHA256=b3820adbad1f073188c33c283bce7e5296fcee175fb3ae2dca280b08c597fcb8
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_UPDATE_VERSION_REGEXP='\d+(\.\d+)+'
+TERMUX_PKG_UPDATE_VERSION_REGEXP='^OTP-[\d.]+$'
 TERMUX_PKG_DEPENDS="libc++, openssl, ncurses, zlib"
 TERMUX_PKG_NO_STATICSPLIT=true
 TERMUX_PKG_HOSTBUILD=true
@@ -18,18 +17,32 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 --with-termcap
 erl_xcomp_sysroot=${TERMUX_PREFIX}
 "
-
-termux_pkg_auto_update() {
-	# Get latest release tag:
-	local tag
-	tag="$(termux_github_api_get_tag "${TERMUX_PKG_SRCURL}")"
-	# check if this is not an intermediate release candidate:
-	if grep -qP "^OTP-${TERMUX_PKG_UPDATE_VERSION_REGEXP}\$" <<<"$tag"; then
-		termux_pkg_upgrade_version "$tag"
-	else
-		echo "WARNING: Skipping auto-update: Not stable release($tag)"
-	fi
-}
+# for some reason, these do not work properly, and are duplicates
+# of ones patched to work which are installed into $TERMUX_PREFIX/share/man/man1
+TERMUX_PKG_RM_AFTER_INSTALL="
+lib/erlang/man
+"
+# were present in erlang 26
+# were not present in erlang 27 through erlang 28.2
+# reappeared in erlang 28.3
+# https://github.com/erlang/otp/pull/10237
+# conflict with zlib
+# conflict with perl
+# conflict with libowfat
+# conflict with manpages
+TERMUX_PKG_RM_AFTER_INSTALL+="
+share/man/man3/zlib.3
+share/man/man3/re.3
+share/man/man3/array.3
+share/man/man3/inet.3
+share/man/man3/queue.3
+share/man/man3/rand.3
+share/man/man3/random.3
+share/man/man3/rpc.3
+share/man/man3/string.3
+"
+# will overwrite man pages of perl and zlib
+TERMUX_PKG_ON_DEVICE_BUILD_NOT_SUPPORTED=true
 
 termux_step_post_get_source() {
 	# We need a host build every time, because we dont know the full output of host build and have no idea to cache it.
@@ -40,8 +53,11 @@ termux_step_host_build() {
 	cd $TERMUX_PKG_BUILDDIR
 	# Erlang cross compile reference: https://github.com/erlang/otp/blob/master/HOWTO/INSTALL-CROSS.md#building-a-bootstrap-system
 	# Build erlang bootstrap system.
-	./configure --enable-bootstrap-only --without-javac --without-ssl --without-termcap
+	# the prefix must be set to $TERMUX_PREFIX here to install the documentation where desired
+	# without making a mess.
+	./configure --prefix="$TERMUX_PREFIX" --without-javac --with-termcap
 	make -j $TERMUX_PKG_MAKE_PROCESSES
+	make RELSYS_MANDIR="$TERMUX_PREFIX/share/man" install-docs
 }
 
 termux_step_pre_configure() {

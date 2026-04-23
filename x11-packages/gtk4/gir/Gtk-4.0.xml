@@ -60,6 +60,7 @@
     <property name="css-name" type="gchararray" flags="235" default-value="NULL"/>
     <property name="css-classes" type="GStrv" flags="227"/>
     <property name="layout-manager" type="GtkLayoutManager" flags="1073742051"/>
+    <property name="limit-events" type="gboolean" flags="1073742051" default-value="FALSE"/>
     <signal name="destroy" return="void" when="cleanup" no-recurse="1" no-hooks="1">
     </signal>
     <signal name="show" return="void" when="first">
@@ -100,7 +101,7 @@
   <class name="GtkApplication" get-type="gtk_application_get_type" parents="GApplication,GObject">
     <implements name="GActionGroup"/>
     <implements name="GActionMap"/>
-    <property name="register-session" type="gboolean" flags="227" default-value="FALSE"/>
+    <property name="register-session" type="gboolean" flags="-2147483421" default-value="FALSE"/>
     <property name="screensaver-active" type="gboolean" flags="225" default-value="FALSE"/>
     <property name="menubar" type="GMenuModel" flags="227"/>
     <property name="active-window" type="GtkWindow" flags="225"/>
@@ -138,13 +139,14 @@
     <property name="child" type="GtkWidget" flags="1073742051"/>
     <property name="titlebar" type="GtkWidget" flags="1073742051"/>
     <property name="handle-menubar-accel" type="gboolean" flags="1073742051" default-value="TRUE"/>
+    <property name="gravity" type="GtkWindowGravity" flags="1073742051" default-value="GTK_WINDOW_GRAVITY_TOP_START"/>
     <property name="is-active" type="gboolean" flags="225" default-value="FALSE"/>
     <property name="suspended" type="gboolean" flags="1073742049" default-value="FALSE"/>
     <property name="startup-id" type="gchararray" flags="226" default-value="NULL"/>
     <property name="mnemonics-visible" type="gboolean" flags="1073742051" default-value="FALSE"/>
     <property name="focus-visible" type="gboolean" flags="1073742051" default-value="TRUE"/>
-    <property name="maximized" type="gboolean" flags="1073742055" default-value="FALSE"/>
-    <property name="fullscreened" type="gboolean" flags="1073742055" default-value="FALSE"/>
+    <property name="maximized" type="gboolean" flags="1073742051" default-value="FALSE"/>
+    <property name="fullscreened" type="gboolean" flags="1073742051" default-value="FALSE"/>
     <signal name="activate-focus" return="void" when="last" action="1">
     </signal>
     <signal name="activate-default" return="void" when="last" action="1">
@@ -188,10 +190,16 @@
     <property name="accessible-role" type="GtkAccessibleRole" flags="227" default-value="GTK_ACCESSIBLE_ROLE_NONE"/>
   </interface>
   <boxed name="GtkAccessibleList" get-type="gtk_accessible_list_get_type"/>
-  <interface name="GtkAccessibleRange" get-type="gtk_accessible_range_get_type">
+  <interface name="GtkAccessibleText" get-type="gtk_accessible_text_get_type">
     <prerequisite name="GtkAccessible"/>
   </interface>
-  <interface name="GtkAccessibleText" get-type="gtk_accessible_text_get_type">
+  <class name="GtkAccessibleHyperlink" get-type="gtk_accessible_hyperlink_get_type" parents="GObject">
+    <implements name="GtkAccessible"/>
+  </class>
+  <interface name="GtkAccessibleHypertext" get-type="gtk_accessible_hypertext_get_type">
+    <prerequisite name="GtkAccessible"/>
+  </interface>
+  <interface name="GtkAccessibleRange" get-type="gtk_accessible_range_get_type">
     <prerequisite name="GtkAccessible"/>
   </interface>
   <interface name="GtkActionable" get-type="gtk_actionable_get_type">
@@ -339,6 +347,8 @@
   </fundamental>
   <fundamental name="GtkCClosureExpression" get-type="gtk_cclosure_expression_get_type" instantiatable="1" parents="GtkExpression">
   </fundamental>
+  <fundamental name="GtkTryExpression" get-type="gtk_try_expression_get_type" instantiatable="1" parents="GtkExpression">
+  </fundamental>
   <fundamental name="GtkParamSpecExpression" get-type="gtk_param_expression_get_type" instantiatable="1" parents="GParam">
   </fundamental>
   <class name="GtkFilter" get-type="gtk_filter_get_type" parents="GObject">
@@ -407,6 +417,7 @@
     <implements name="GtkAccessible"/>
     <implements name="GtkBuildable"/>
     <implements name="GtkConstraintTarget"/>
+    <property name="date" type="GDateTime" flags="1073741827"/>
     <property name="year" type="gint" flags="1073741827" default-value="1"/>
     <property name="month" type="gint" flags="1073741827" default-value="0"/>
     <property name="day" type="gint" flags="1073741827" default-value="1"/>
@@ -635,6 +646,17 @@
     <member name="GTK_BUTTONS_CANCEL" nick="cancel" value="3"/>
     <member name="GTK_BUTTONS_YES_NO" nick="yes-no" value="4"/>
     <member name="GTK_BUTTONS_OK_CANCEL" nick="ok-cancel" value="5"/>
+  </enum>  <enum name="GtkShortcutType" get-type="gtk_shortcut_type_get_type">
+    <member name="GTK_SHORTCUT_ACCELERATOR" nick="accelerator" value="0"/>
+    <member name="GTK_SHORTCUT_GESTURE_PINCH" nick="gesture-pinch" value="1"/>
+    <member name="GTK_SHORTCUT_GESTURE_STRETCH" nick="gesture-stretch" value="2"/>
+    <member name="GTK_SHORTCUT_GESTURE_ROTATE_CLOCKWISE" nick="gesture-rotate-clockwise" value="3"/>
+    <member name="GTK_SHORTCUT_GESTURE_ROTATE_COUNTERCLOCKWISE" nick="gesture-rotate-counterclockwise" value="4"/>
+    <member name="GTK_SHORTCUT_GESTURE_TWO_FINGER_SWIPE_LEFT" nick="gesture-two-finger-swipe-left" value="5"/>
+    <member name="GTK_SHORTCUT_GESTURE_TWO_FINGER_SWIPE_RIGHT" nick="gesture-two-finger-swipe-right" value="6"/>
+    <member name="GTK_SHORTCUT_GESTURE" nick="gesture" value="7"/>
+    <member name="GTK_SHORTCUT_GESTURE_SWIPE_LEFT" nick="gesture-swipe-left" value="8"/>
+    <member name="GTK_SHORTCUT_GESTURE_SWIPE_RIGHT" nick="gesture-swipe-right" value="9"/>
   </enum>  <flags name="GtkStyleContextPrintFlags" get-type="gtk_style_context_print_flags_get_type">
     <member name="GTK_STYLE_CONTEXT_PRINT_NONE" nick="none" value="0"/>
     <member name="GTK_STYLE_CONTEXT_PRINT_RECURSE" nick="recurse" value="1"/>
@@ -720,10 +742,11 @@
     <member name="GTK_DEBUG_GEOMETRY" nick="geometry" value="16"/>
     <member name="GTK_DEBUG_ICONTHEME" nick="icontheme" value="32"/>
     <member name="GTK_DEBUG_PRINTING" nick="printing" value="64"/>
-    <member name="GTK_DEBUG_BUILDER" nick="builder" value="128"/>
+    <member name="GTK_DEBUG_BUILDER_TRACE" nick="builder-trace" value="128"/>
     <member name="GTK_DEBUG_SIZE_REQUEST" nick="size-request" value="256"/>
     <member name="GTK_DEBUG_NO_CSS_CACHE" nick="no-css-cache" value="512"/>
     <member name="GTK_DEBUG_INTERACTIVE" nick="interactive" value="1024"/>
+    <member name="GTK_DEBUG_TOUCHSCREEN" nick="touchscreen" value="2048"/>
     <member name="GTK_DEBUG_ACTIONS" nick="actions" value="4096"/>
     <member name="GTK_DEBUG_LAYOUT" nick="layout" value="8192"/>
     <member name="GTK_DEBUG_SNAPSHOT" nick="snapshot" value="16384"/>
@@ -732,6 +755,9 @@
     <member name="GTK_DEBUG_A11Y" nick="a11y" value="131072"/>
     <member name="GTK_DEBUG_ICONFALLBACK" nick="iconfallback" value="262144"/>
     <member name="GTK_DEBUG_INVERT_TEXT_DIR" nick="invert-text-dir" value="524288"/>
+    <member name="GTK_DEBUG_CSS" nick="css" value="1048576"/>
+    <member name="GTK_DEBUG_BUILDER" nick="builder" value="2097152"/>
+    <member name="GTK_DEBUG_SESSION" nick="session" value="4194304"/>
   </flags>
   <enum name="GtkDialogError" get-type="gtk_dialog_error_get_type">
     <member name="GTK_DIALOG_ERROR_FAILED" nick="failed" value="0"/>
@@ -1053,12 +1079,12 @@
     <member name="GTK_CONSTRAINT_ATTRIBUTE_CENTER_Y" nick="center-y" value="10"/>
     <member name="GTK_CONSTRAINT_ATTRIBUTE_BASELINE" nick="baseline" value="11"/>
   </enum>  <enum name="GtkConstraintVflParserError" get-type="gtk_constraint_vfl_parser_error_get_type">
-    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_SYMBOL" nick="symbol" value="0"/>
-    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_ATTRIBUTE" nick="attribute" value="1"/>
-    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_VIEW" nick="view" value="2"/>
-    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_METRIC" nick="metric" value="3"/>
-    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_PRIORITY" nick="priority" value="4"/>
-    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_RELATION" nick="relation" value="5"/>
+    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_SYMBOL" nick="invalid-symbol" value="0"/>
+    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_ATTRIBUTE" nick="invalid-attribute" value="1"/>
+    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_VIEW" nick="invalid-view" value="2"/>
+    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_METRIC" nick="invalid-metric" value="3"/>
+    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_PRIORITY" nick="invalid-priority" value="4"/>
+    <member name="GTK_CONSTRAINT_VFL_PARSER_ERROR_INVALID_RELATION" nick="invalid-relation" value="5"/>
   </enum>  <enum name="GtkSystemSetting" get-type="gtk_system_setting_get_type">
     <member name="GTK_SYSTEM_SETTING_DPI" nick="dpi" value="0"/>
     <member name="GTK_SYSTEM_SETTING_FONT_NAME" nick="font-name" value="1"/>
@@ -1070,6 +1096,7 @@
     <member name="GTK_SYMBOLIC_COLOR_ERROR" nick="error" value="1"/>
     <member name="GTK_SYMBOLIC_COLOR_WARNING" nick="warning" value="2"/>
     <member name="GTK_SYMBOLIC_COLOR_SUCCESS" nick="success" value="3"/>
+    <member name="GTK_SYMBOLIC_COLOR_ACCENT" nick="accent" value="4"/>
   </enum>  <enum name="GtkAccessibleRole" get-type="gtk_accessible_role_get_type">
     <member name="GTK_ACCESSIBLE_ROLE_ALERT" nick="alert" value="0"/>
     <member name="GTK_ACCESSIBLE_ROLE_ALERT_DIALOG" nick="alert-dialog" value="1"/>
@@ -1186,6 +1213,7 @@
     <member name="GTK_ACCESSIBLE_PROPERTY_VALUE_MIN" nick="value-min" value="16"/>
     <member name="GTK_ACCESSIBLE_PROPERTY_VALUE_NOW" nick="value-now" value="17"/>
     <member name="GTK_ACCESSIBLE_PROPERTY_VALUE_TEXT" nick="value-text" value="18"/>
+    <member name="GTK_ACCESSIBLE_PROPERTY_HELP_TEXT" nick="help-text" value="19"/>
   </enum>  <enum name="GtkAccessibleRelation" get-type="gtk_accessible_relation_get_type">
     <member name="GTK_ACCESSIBLE_RELATION_ACTIVE_DESCENDANT" nick="active-descendant" value="0"/>
     <member name="GTK_ACCESSIBLE_RELATION_COL_COUNT" nick="col-count" value="1"/>
@@ -1205,6 +1233,12 @@
     <member name="GTK_ACCESSIBLE_RELATION_ROW_INDEX_TEXT" nick="row-index-text" value="15"/>
     <member name="GTK_ACCESSIBLE_RELATION_ROW_SPAN" nick="row-span" value="16"/>
     <member name="GTK_ACCESSIBLE_RELATION_SET_SIZE" nick="set-size" value="17"/>
+    <member name="GTK_ACCESSIBLE_RELATION_LABEL_FOR" nick="label-for" value="18"/>
+    <member name="GTK_ACCESSIBLE_RELATION_DESCRIPTION_FOR" nick="description-for" value="19"/>
+    <member name="GTK_ACCESSIBLE_RELATION_CONTROLLED_BY" nick="controlled-by" value="20"/>
+    <member name="GTK_ACCESSIBLE_RELATION_DETAILS_FOR" nick="details-for" value="21"/>
+    <member name="GTK_ACCESSIBLE_RELATION_ERROR_MESSAGE_FOR" nick="error-message-for" value="22"/>
+    <member name="GTK_ACCESSIBLE_RELATION_FLOW_FROM" nick="flow-from" value="23"/>
   </enum>  <enum name="GtkAccessibleTristate" get-type="gtk_accessible_tristate_get_type">
     <member name="GTK_ACCESSIBLE_TRISTATE_FALSE" nick="false" value="0"/>
     <member name="GTK_ACCESSIBLE_TRISTATE_TRUE" nick="true" value="1"/>
@@ -1232,12 +1266,35 @@
     <member name="GTK_POPOVER_MENU_SLIDING" nick="sliding" value="0"/>
     <member name="GTK_POPOVER_MENU_NESTED" nick="nested" value="1"/>
   </flags>
-  <flags name="GtkEventControllerScrollFlags" get-type="gtk_event_controller_scroll_flags_get_type">
+  <enum name="GtkFontRendering" get-type="gtk_font_rendering_get_type">
+    <member name="GTK_FONT_RENDERING_AUTOMATIC" nick="automatic" value="0"/>
+    <member name="GTK_FONT_RENDERING_MANUAL" nick="manual" value="1"/>
+  </enum>  <flags name="GtkTextBufferNotifyFlags" get-type="gtk_text_buffer_notify_flags_get_type">
+    <member name="GTK_TEXT_BUFFER_NOTIFY_BEFORE_INSERT" nick="before-insert" value="1"/>
+    <member name="GTK_TEXT_BUFFER_NOTIFY_AFTER_INSERT" nick="after-insert" value="2"/>
+    <member name="GTK_TEXT_BUFFER_NOTIFY_BEFORE_DELETE" nick="before-delete" value="4"/>
+    <member name="GTK_TEXT_BUFFER_NOTIFY_AFTER_DELETE" nick="after-delete" value="8"/>
+  </flags>
+  <enum name="GtkInterfaceColorScheme" get-type="gtk_interface_color_scheme_get_type">
+    <member name="GTK_INTERFACE_COLOR_SCHEME_UNSUPPORTED" nick="unsupported" value="0"/>
+    <member name="GTK_INTERFACE_COLOR_SCHEME_DEFAULT" nick="default" value="1"/>
+    <member name="GTK_INTERFACE_COLOR_SCHEME_DARK" nick="dark" value="2"/>
+    <member name="GTK_INTERFACE_COLOR_SCHEME_LIGHT" nick="light" value="3"/>
+  </enum>  <enum name="GtkInterfaceContrast" get-type="gtk_interface_contrast_get_type">
+    <member name="GTK_INTERFACE_CONTRAST_UNSUPPORTED" nick="unsupported" value="0"/>
+    <member name="GTK_INTERFACE_CONTRAST_NO_PREFERENCE" nick="no-preference" value="1"/>
+    <member name="GTK_INTERFACE_CONTRAST_MORE" nick="more" value="2"/>
+    <member name="GTK_INTERFACE_CONTRAST_LESS" nick="less" value="3"/>
+  </enum>  <enum name="GtkReducedMotion" get-type="gtk_reduced_motion_get_type">
+    <member name="GTK_REDUCED_MOTION_NO_PREFERENCE" nick="no-preference" value="0"/>
+    <member name="GTK_REDUCED_MOTION_REDUCE" nick="reduce" value="1"/>
+  </enum>  <flags name="GtkEventControllerScrollFlags" get-type="gtk_event_controller_scroll_flags_get_type">
     <member name="GTK_EVENT_CONTROLLER_SCROLL_NONE" nick="none" value="0"/>
     <member name="GTK_EVENT_CONTROLLER_SCROLL_VERTICAL" nick="vertical" value="1"/>
     <member name="GTK_EVENT_CONTROLLER_SCROLL_HORIZONTAL" nick="horizontal" value="2"/>
     <member name="GTK_EVENT_CONTROLLER_SCROLL_DISCRETE" nick="discrete" value="4"/>
     <member name="GTK_EVENT_CONTROLLER_SCROLL_KINETIC" nick="kinetic" value="8"/>
+    <member name="GTK_EVENT_CONTROLLER_SCROLL_PHYSICAL_DIRECTION" nick="physical-direction" value="16"/>
     <member name="GTK_EVENT_CONTROLLER_SCROLL_BOTH_AXES" nick="both-axes" value="3"/>
   </flags>
   <enum name="GtkFilterMatch" get-type="gtk_filter_match_get_type">
@@ -1248,6 +1305,9 @@
     <member name="GTK_FILTER_CHANGE_DIFFERENT" nick="different" value="0"/>
     <member name="GTK_FILTER_CHANGE_LESS_STRICT" nick="less-strict" value="1"/>
     <member name="GTK_FILTER_CHANGE_MORE_STRICT" nick="more-strict" value="2"/>
+    <member name="GTK_FILTER_CHANGE_DIFFERENT_REWATCH" nick="different-rewatch" value="3"/>
+    <member name="GTK_FILTER_CHANGE_LESS_STRICT_REWATCH" nick="less-strict-rewatch" value="4"/>
+    <member name="GTK_FILTER_CHANGE_MORE_STRICT_REWATCH" nick="more-strict-rewatch" value="5"/>
   </enum>  <enum name="GtkFontLevel" get-type="gtk_font_level_get_type">
     <member name="GTK_FONT_LEVEL_FAMILY" nick="family" value="0"/>
     <member name="GTK_FONT_LEVEL_FACE" nick="face" value="1"/>
@@ -1257,6 +1317,7 @@
     <member name="GTK_GRAPHICS_OFFLOAD_ENABLED" nick="enabled" value="0"/>
     <member name="GTK_GRAPHICS_OFFLOAD_DISABLED" nick="disabled" value="1"/>
   </enum>  <flags name="GtkIconLookupFlags" get-type="gtk_icon_lookup_flags_get_type">
+    <member name="GTK_ICON_LOOKUP_NONE" nick="none" value="0"/>
     <member name="GTK_ICON_LOOKUP_FORCE_REGULAR" nick="force-regular" value="1"/>
     <member name="GTK_ICON_LOOKUP_FORCE_SYMBOLIC" nick="force-symbolic" value="2"/>
     <member name="GTK_ICON_LOOKUP_PRELOAD" nick="preload" value="4"/>
@@ -1281,6 +1342,7 @@
     <member name="GTK_PAD_ACTION_BUTTON" nick="button" value="0"/>
     <member name="GTK_PAD_ACTION_RING" nick="ring" value="1"/>
     <member name="GTK_PAD_ACTION_STRIP" nick="strip" value="2"/>
+    <member name="GTK_PAD_ACTION_DIAL" nick="dial" value="3"/>
   </enum>  <enum name="GtkRecentManagerError" get-type="gtk_recent_manager_error_get_type">
     <member name="GTK_RECENT_MANAGER_ERROR_NOT_FOUND" nick="not-found" value="0"/>
     <member name="GTK_RECENT_MANAGER_ERROR_INVALID_URI" nick="invalid-uri" value="1"/>
@@ -1300,6 +1362,10 @@
     <member name="GTK_REVEALER_TRANSITION_TYPE_SWING_LEFT" nick="swing-left" value="7"/>
     <member name="GTK_REVEALER_TRANSITION_TYPE_SWING_UP" nick="swing-up" value="8"/>
     <member name="GTK_REVEALER_TRANSITION_TYPE_SWING_DOWN" nick="swing-down" value="9"/>
+    <member name="GTK_REVEALER_TRANSITION_TYPE_FADE_SLIDE_RIGHT" nick="fade-slide-right" value="10"/>
+    <member name="GTK_REVEALER_TRANSITION_TYPE_FADE_SLIDE_LEFT" nick="fade-slide-left" value="11"/>
+    <member name="GTK_REVEALER_TRANSITION_TYPE_FADE_SLIDE_UP" nick="fade-slide-up" value="12"/>
+    <member name="GTK_REVEALER_TRANSITION_TYPE_FADE_SLIDE_DOWN" nick="fade-slide-down" value="13"/>
   </enum>  <enum name="GtkCornerType" get-type="gtk_corner_type_get_type">
     <member name="GTK_CORNER_TOP_LEFT" nick="top-left" value="0"/>
     <member name="GTK_CORNER_BOTTOM_LEFT" nick="bottom-left" value="1"/>
@@ -1313,18 +1379,7 @@
   </enum>  <flags name="GtkShortcutActionFlags" get-type="gtk_shortcut_action_flags_get_type">
     <member name="GTK_SHORTCUT_ACTION_EXCLUSIVE" nick="exclusive" value="1"/>
   </flags>
-  <enum name="GtkShortcutType" get-type="gtk_shortcut_type_get_type">
-    <member name="GTK_SHORTCUT_ACCELERATOR" nick="accelerator" value="0"/>
-    <member name="GTK_SHORTCUT_GESTURE_PINCH" nick="gesture-pinch" value="1"/>
-    <member name="GTK_SHORTCUT_GESTURE_STRETCH" nick="gesture-stretch" value="2"/>
-    <member name="GTK_SHORTCUT_GESTURE_ROTATE_CLOCKWISE" nick="gesture-rotate-clockwise" value="3"/>
-    <member name="GTK_SHORTCUT_GESTURE_ROTATE_COUNTERCLOCKWISE" nick="gesture-rotate-counterclockwise" value="4"/>
-    <member name="GTK_SHORTCUT_GESTURE_TWO_FINGER_SWIPE_LEFT" nick="gesture-two-finger-swipe-left" value="5"/>
-    <member name="GTK_SHORTCUT_GESTURE_TWO_FINGER_SWIPE_RIGHT" nick="gesture-two-finger-swipe-right" value="6"/>
-    <member name="GTK_SHORTCUT_GESTURE" nick="gesture" value="7"/>
-    <member name="GTK_SHORTCUT_GESTURE_SWIPE_LEFT" nick="gesture-swipe-left" value="8"/>
-    <member name="GTK_SHORTCUT_GESTURE_SWIPE_RIGHT" nick="gesture-swipe-right" value="9"/>
-  </enum>  <enum name="GtkSorterOrder" get-type="gtk_sorter_order_get_type">
+  <enum name="GtkSorterOrder" get-type="gtk_sorter_order_get_type">
     <member name="GTK_SORTER_ORDER_PARTIAL" nick="partial" value="0"/>
     <member name="GTK_SORTER_ORDER_NONE" nick="none" value="1"/>
     <member name="GTK_SORTER_ORDER_TOTAL" nick="total" value="2"/>
@@ -1376,6 +1431,24 @@
     <member name="GTK_COLLATION_NONE" nick="none" value="0"/>
     <member name="GTK_COLLATION_UNICODE" nick="unicode" value="1"/>
     <member name="GTK_COLLATION_FILENAME" nick="filename" value="2"/>
+  </enum>  <flags name="GtkSvgFeatures" get-type="gtk_svg_features_get_type">
+    <member name="GTK_SVG_ANIMATIONS" nick="animations" value="1"/>
+    <member name="GTK_SVG_SYSTEM_RESOURCES" nick="system-resources" value="2"/>
+    <member name="GTK_SVG_EXTERNAL_RESOURCES" nick="external-resources" value="4"/>
+    <member name="GTK_SVG_EXTENSIONS" nick="extensions" value="8"/>
+    <member name="GTK_SVG_TRADITIONAL_SYMBOLIC" nick="traditional-symbolic" value="16"/>
+  </flags>
+  <enum name="GtkSvgError" get-type="gtk_svg_error_get_type">
+    <member name="GTK_SVG_ERROR_INVALID_SYNTAX" nick="invalid-syntax" value="0"/>
+    <member name="GTK_SVG_ERROR_INVALID_ELEMENT" nick="invalid-element" value="1"/>
+    <member name="GTK_SVG_ERROR_INVALID_ATTRIBUTE" nick="invalid-attribute" value="2"/>
+    <member name="GTK_SVG_ERROR_MISSING_ATTRIBUTE" nick="missing-attribute" value="3"/>
+    <member name="GTK_SVG_ERROR_INVALID_REFERENCE" nick="invalid-reference" value="4"/>
+    <member name="GTK_SVG_ERROR_FAILED_UPDATE" nick="failed-update" value="5"/>
+    <member name="GTK_SVG_ERROR_FAILED_RENDERING" nick="failed-rendering" value="6"/>
+    <member name="GTK_SVG_ERROR_IGNORED_ELEMENT" nick="ignored-element" value="7"/>
+    <member name="GTK_SVG_ERROR_LIMITS_EXCEEDED" nick="limits-exceeded" value="8"/>
+    <member name="GTK_SVG_ERROR_NOT_IMPLEMENTED" nick="not-implemented" value="9"/>
   </enum>  <flags name="GtkTextSearchFlags" get-type="gtk_text_search_flags_get_type">
     <member name="GTK_TEXT_SEARCH_VISIBLE_ONLY" nick="visible-only" value="1"/>
     <member name="GTK_TEXT_SEARCH_TEXT_ONLY" nick="text-only" value="2"/>
@@ -1394,6 +1467,22 @@
   </enum>  <enum name="GtkTextExtendSelection" get-type="gtk_text_extend_selection_get_type">
     <member name="GTK_TEXT_EXTEND_SELECTION_WORD" nick="word" value="0"/>
     <member name="GTK_TEXT_EXTEND_SELECTION_LINE" nick="line" value="1"/>
+  </enum>  <enum name="GtkWindowGravity" get-type="gtk_window_gravity_get_type">
+    <member name="GTK_WINDOW_GRAVITY_TOP_LEFT" nick="top-left" value="0"/>
+    <member name="GTK_WINDOW_GRAVITY_TOP" nick="top" value="1"/>
+    <member name="GTK_WINDOW_GRAVITY_TOP_RIGHT" nick="top-right" value="2"/>
+    <member name="GTK_WINDOW_GRAVITY_LEFT" nick="left" value="3"/>
+    <member name="GTK_WINDOW_GRAVITY_CENTER" nick="center" value="4"/>
+    <member name="GTK_WINDOW_GRAVITY_RIGHT" nick="right" value="5"/>
+    <member name="GTK_WINDOW_GRAVITY_BOTTOM_LEFT" nick="bottom-left" value="6"/>
+    <member name="GTK_WINDOW_GRAVITY_BOTTOM" nick="bottom" value="7"/>
+    <member name="GTK_WINDOW_GRAVITY_BOTTOM_RIGHT" nick="bottom-right" value="8"/>
+    <member name="GTK_WINDOW_GRAVITY_TOP_START" nick="top-start" value="9"/>
+    <member name="GTK_WINDOW_GRAVITY_TOP_END" nick="top-end" value="10"/>
+    <member name="GTK_WINDOW_GRAVITY_START" nick="start" value="11"/>
+    <member name="GTK_WINDOW_GRAVITY_END" nick="end" value="12"/>
+    <member name="GTK_WINDOW_GRAVITY_BOTTOM_START" nick="bottom-start" value="13"/>
+    <member name="GTK_WINDOW_GRAVITY_BOTTOM_END" nick="bottom-end" value="14"/>
   </enum>  <enum name="GtkPrintStatus" get-type="gtk_print_status_get_type">
     <member name="GTK_PRINT_STATUS_INITIAL" nick="initial" value="0"/>
     <member name="GTK_PRINT_STATUS_PREPARING" nick="preparing" value="1"/>
@@ -1449,6 +1538,9 @@
   </class>
   <class name="GtkCssProvider" get-type="gtk_css_provider_get_type" parents="GObject">
     <implements name="GtkStyleProvider"/>
+    <property name="prefers-color-scheme" type="GtkInterfaceColorScheme" flags="1073742051" default-value="GTK_INTERFACE_COLOR_SCHEME_DEFAULT"/>
+    <property name="prefers-contrast" type="GtkInterfaceContrast" flags="1073742051" default-value="GTK_INTERFACE_CONTRAST_NO_PREFERENCE"/>
+    <property name="prefers-reduced-motion" type="GtkReducedMotion" flags="1073742051" default-value="GTK_REDUCED_MOTION_NO_PREFERENCE"/>
     <signal name="parsing-error" return="void" when="last">
       <param type="GtkCssSection"/>
       <param type="GError"/>
@@ -1531,7 +1623,7 @@
     </signal>
   </class>
   <class name="GtkDropTarget" get-type="gtk_drop_target_get_type" parents="GtkEventController,GObject">
-    <property name="actions" type="GdkDragAction" flags="1073742051" default-value="0"/>
+    <property name="actions" type="GdkDragAction" flags="1073742051" default-value="GDK_ACTION_NONE"/>
     <property name="current-drop" type="GdkDrop" flags="225"/>
     <property name="drop" type="GdkDrop" flags="-2147483423"/>
     <property name="formats" type="GdkContentFormats" flags="235"/>
@@ -1557,7 +1649,7 @@
     </signal>
   </class>
   <class name="GtkDropTargetAsync" get-type="gtk_drop_target_async_get_type" parents="GtkEventController,GObject">
-    <property name="actions" type="GdkDragAction" flags="1073742051" default-value="0"/>
+    <property name="actions" type="GdkDragAction" flags="1073742051" default-value="GDK_ACTION_NONE"/>
     <property name="formats" type="GdkContentFormats" flags="1073742051"/>
     <signal name="drop" return="gboolean" when="last">
       <param type="GdkDrop"/>
@@ -1660,6 +1752,9 @@
     <signal name="delete-surrounding" return="gboolean" when="last">
       <param type="gint"/>
       <param type="gint"/>
+    </signal>
+    <signal name="invalid-composition" return="gboolean" when="last">
+      <param type="gchararray"/>
     </signal>
   </class>
   <class name="GtkEntryBuffer" get-type="gtk_entry_buffer_get_type" parents="GObject">
@@ -1887,6 +1982,8 @@
     <property name="extra-menu" type="GMenuModel" flags="1073742051"/>
     <property name="show-emoji-icon" type="gboolean" flags="1073742051" default-value="FALSE"/>
     <property name="enable-emoji-completion" type="gboolean" flags="1073742051" default-value="FALSE"/>
+    <property name="menu-entry-icon-primary-text" type="gchararray" flags="1073742051" default-value="NULL"/>
+    <property name="menu-entry-icon-secondary-text" type="gchararray" flags="1073742051" default-value="NULL"/>
     <signal name="activate" return="void" when="last" action="1">
     </signal>
     <signal name="icon-press" return="void" when="last">
@@ -2000,6 +2097,7 @@
     <property name="model" type="GListModel" flags="1073742051"/>
     <property name="n-items" type="guint" flags="225" default-value="0"/>
     <property name="pending" type="guint" flags="1073742049" default-value="0"/>
+    <property name="watch-items" type="gboolean" flags="1073742051" default-value="FALSE"/>
   </class>
   <class name="GtkFixed" get-type="gtk_fixed_get_type" parents="GtkWidget,GInitiallyUnowned,GObject">
     <implements name="GtkAccessible"/>
@@ -2226,6 +2324,7 @@
     <implements name="GtkConstraintTarget"/>
     <property name="child" type="GtkWidget" flags="1073742051"/>
     <property name="enabled" type="GtkGraphicsOffloadEnabled" flags="1073742051" default-value="GTK_GRAPHICS_OFFLOAD_ENABLED"/>
+    <property name="black-background" type="gboolean" flags="1073742051" default-value="FALSE"/>
   </class>
   <class name="GtkGrid" get-type="gtk_grid_get_type" parents="GtkWidget,GInitiallyUnowned,GObject">
     <implements name="GtkAccessible"/>
@@ -2283,6 +2382,16 @@
     <property name="title-widget" type="GtkWidget" flags="1073742051"/>
     <property name="show-title-buttons" type="gboolean" flags="1073742051" default-value="TRUE"/>
     <property name="decoration-layout" type="gchararray" flags="227" default-value="NULL"/>
+    <property name="use-native-controls" type="gboolean" flags="1073742051" default-value="FALSE"/>
+  </class>
+  <class name="GtkIconPaintable" get-type="gtk_icon_paintable_get_type" parents="GObject">
+    <implements name="GdkPaintable"/>
+    <implements name="GtkSymbolicPaintable"/>
+    <property name="file" type="GFile" flags="235"/>
+    <property name="icon-name" type="gchararray" flags="-2147483605" default-value="NULL"/>
+    <property name="is-symbolic" type="gboolean" flags="-1073741789" default-value="FALSE"/>
+    <property name="size" type="gint" flags="1073741859" default-value="16"/>
+    <property name="scale" type="gint" flags="1073741859" default-value="1"/>
   </class>
   <class name="GtkIconTheme" get-type="gtk_icon_theme_get_type" parents="GObject">
     <property name="display" type="GdkDisplay" flags="1073741827"/>
@@ -2292,13 +2401,6 @@
     <property name="theme-name" type="gchararray" flags="1073742051" default-value="NULL"/>
     <signal name="changed" return="void" when="last">
     </signal>
-  </class>
-  <class name="GtkIconPaintable" get-type="gtk_icon_paintable_get_type" parents="GObject">
-    <implements name="GdkPaintable"/>
-    <implements name="GtkSymbolicPaintable"/>
-    <property name="file" type="GFile" flags="235"/>
-    <property name="icon-name" type="gchararray" flags="235" default-value="NULL"/>
-    <property name="is-symbolic" type="gboolean" flags="235" default-value="FALSE"/>
   </class>
   <class name="GtkIMContextSimple" get-type="gtk_im_context_simple_get_type" parents="GtkIMContext,GObject">
   </class>
@@ -2872,6 +2974,7 @@
     <implements name="GtkBuildable"/>
     <implements name="GtkConstraintTarget"/>
     <implements name="GtkAccessibleText"/>
+    <implements name="GtkAccessibleHypertext"/>
     <property name="label" type="gchararray" flags="227" default-value=""/>
     <property name="attributes" type="PangoAttrList" flags="227"/>
     <property name="use-markup" type="gboolean" flags="1073742051" default-value="FALSE"/>
@@ -2949,6 +3052,7 @@
     <property name="activate-on-single-click" type="gboolean" flags="1073741827" default-value="TRUE"/>
     <property name="accept-unpaired-release" type="gboolean" flags="1073741827" default-value="FALSE"/>
     <property name="show-separators" type="gboolean" flags="1073741827" default-value="FALSE"/>
+    <property name="tab-behavior" type="GtkListTabBehavior" flags="1073741827" default-value="GTK_LIST_TAB_ALL"/>
     <signal name="move-cursor" return="void" when="last" action="1">
       <param type="GtkMovementStep"/>
       <param type="gint"/>
@@ -3013,12 +3117,12 @@
     <implements name="GtkSectionModel"/>
     <property name="has-map" type="gboolean" flags="1073742049" default-value="FALSE"/>
     <property name="item-type" type="GType" flags="225"/>
-    <property name="model" type="GListModel" flags="1073742059"/>
+    <property name="model" type="GListModel" flags="1073742051"/>
     <property name="n-items" type="guint" flags="225" default-value="0"/>
   </class>
   <class name="GtkMediaStream" get-type="gtk_media_stream_get_type" parents="GObject" abstract="1">
     <implements name="GdkPaintable"/>
-    <property name="prepared" type="gboolean" flags="1073742051" default-value="FALSE"/>
+    <property name="prepared" type="gboolean" flags="1073742049" default-value="FALSE"/>
     <property name="error" type="GError" flags="1073742049"/>
     <property name="has-audio" type="gboolean" flags="1073742049" default-value="FALSE"/>
     <property name="has-video" type="gboolean" flags="1073742049" default-value="FALSE"/>
@@ -3287,6 +3391,16 @@
     <property name="keep-aspect-ratio" type="gboolean" flags="-1073741597" default-value="TRUE"/>
     <property name="can-shrink" type="gboolean" flags="1073742051" default-value="TRUE"/>
     <property name="content-fit" type="GtkContentFit" flags="1073742051" default-value="GTK_CONTENT_FIT_CONTAIN"/>
+    <property name="isolate-contents" type="gboolean" flags="1073742051" default-value="TRUE"/>
+  </class>
+  <class name="GtkPopoverBin" get-type="gtk_popover_bin_get_type" parents="GtkWidget,GInitiallyUnowned,GObject" final="1">
+    <implements name="GtkAccessible"/>
+    <implements name="GtkBuildable"/>
+    <implements name="GtkConstraintTarget"/>
+    <property name="child" type="GtkWidget" flags="1073742051"/>
+    <property name="popover" type="GtkPopover" flags="1073742051"/>
+    <property name="menu-model" type="GMenuModel" flags="1073742051"/>
+    <property name="handle-input" type="gboolean" flags="1073742051" default-value="FALSE"/>
   </class>
   <class name="GtkPopoverMenu" get-type="gtk_popover_menu_get_type" parents="GtkPopover,GtkWidget,GInitiallyUnowned,GObject">
     <implements name="GtkAccessible"/>
@@ -3542,6 +3656,7 @@
     <property name="input-hints" type="GtkInputHints" flags="1073742051" default-value="GTK_INPUT_HINT_NONE"/>
     <property name="activates-default" type="gboolean" flags="1073742051" default-value="FALSE"/>
     <property name="search-delay" type="guint" flags="1073742051" default-value="150"/>
+    <property name="key-capture-widget" type="GtkWidget" flags="1073742055"/>
     <signal name="activate" return="void" when="last" action="1">
     </signal>
     <signal name="search-changed" return="void" when="last">
@@ -3592,7 +3707,7 @@
     <property name="gtk-xft-hintstyle" type="gchararray" flags="227" default-value="NULL"/>
     <property name="gtk-xft-rgba" type="gchararray" flags="227" default-value="NULL"/>
     <property name="gtk-xft-dpi" type="gint" flags="227" default-value="-1"/>
-    <property name="gtk-hint-font-metrics" type="gboolean" flags="227" default-value="FALSE"/>
+    <property name="gtk-hint-font-metrics" type="gboolean" flags="227" default-value="TRUE"/>
     <property name="gtk-cursor-theme-name" type="gchararray" flags="227" default-value="NULL"/>
     <property name="gtk-cursor-theme-size" type="gint" flags="227" default-value="0"/>
     <property name="gtk-alternative-button-order" type="gboolean" flags="227" default-value="FALSE"/>
@@ -3600,7 +3715,7 @@
     <property name="gtk-enable-animations" type="gboolean" flags="227" default-value="TRUE"/>
     <property name="gtk-error-bell" type="gboolean" flags="227" default-value="TRUE"/>
     <property name="gtk-show-status-shapes" type="gboolean" flags="227" default-value="FALSE"/>
-    <property name="gtk-print-backends" type="gchararray" flags="227" default-value="cups,file"/>
+    <property name="gtk-print-backends" type="gchararray" flags="227" default-value="file"/>
     <property name="gtk-print-preview-command" type="gchararray" flags="227" default-value="evince --unlink-tempfile --preview --print-settings %s %f"/>
     <property name="gtk-enable-accels" type="gboolean" flags="227" default-value="TRUE"/>
     <property name="gtk-im-module" type="gchararray" flags="227" default-value="NULL"/>
@@ -3627,6 +3742,10 @@
     <property name="gtk-long-press-time" type="guint" flags="227" default-value="500"/>
     <property name="gtk-keynav-use-caret" type="gboolean" flags="227" default-value="FALSE"/>
     <property name="gtk-overlay-scrolling" type="gboolean" flags="227" default-value="TRUE"/>
+    <property name="gtk-font-rendering" type="GtkFontRendering" flags="227" default-value="GTK_FONT_RENDERING_AUTOMATIC"/>
+    <property name="gtk-interface-color-scheme" type="GtkInterfaceColorScheme" flags="227" default-value="GTK_INTERFACE_COLOR_SCHEME_UNSUPPORTED"/>
+    <property name="gtk-interface-contrast" type="GtkInterfaceContrast" flags="227" default-value="GTK_INTERFACE_CONTRAST_UNSUPPORTED"/>
+    <property name="gtk-interface-reduced-motion" type="GtkReducedMotion" flags="227" default-value="GTK_REDUCED_MOTION_NO_PREFERENCE"/>
   </class>
   <class name="GtkShortcutController" get-type="gtk_shortcut_controller_get_type" parents="GtkEventController,GObject">
     <implements name="GListModel"/>
@@ -3637,6 +3756,8 @@
     <property name="n-items" type="guint" flags="225" default-value="0"/>
     <property name="scope" type="GtkShortcutScope" flags="1073742051" default-value="GTK_SHORTCUT_SCOPE_LOCAL"/>
   </class>
+  <interface name="GtkShortcutManager" get-type="gtk_shortcut_manager_get_type">
+  </interface>
   <class name="GtkShortcutLabel" get-type="gtk_shortcut_label_get_type" parents="GtkWidget,GInitiallyUnowned,GObject">
     <implements name="GtkAccessible"/>
     <implements name="GtkBuildable"/>
@@ -3644,8 +3765,6 @@
     <property name="accelerator" type="gchararray" flags="227" default-value="NULL"/>
     <property name="disabled-text" type="gchararray" flags="227" default-value="NULL"/>
   </class>
-  <interface name="GtkShortcutManager" get-type="gtk_shortcut_manager_get_type">
-  </interface>
   <class name="GtkShortcutTrigger" get-type="gtk_shortcut_trigger_get_type" parents="GObject" abstract="1">
   </class>
   <class name="GtkNeverTrigger" get-type="gtk_never_trigger_get_type" parents="GtkShortcutTrigger,GObject">
@@ -3809,6 +3928,18 @@
   </interface>
   <class name="GtkStyleContext" get-type="gtk_style_context_get_type" parents="GObject">
     <property name="display" type="GdkDisplay" flags="227"/>
+  </class>
+  <class name="GtkSvg" get-type="gtk_svg_get_type" parents="GObject">
+    <implements name="GdkPaintable"/>
+    <implements name="GtkSymbolicPaintable"/>
+    <property name="resource" type="gchararray" flags="1073741827" default-value="NULL"/>
+    <property name="features" type="GtkSvgFeatures" flags="1073741827" default-value="GTK_SVG_ANIMATIONS | GTK_SVG_SYSTEM_RESOURCES | GTK_SVG_EXTERNAL_RESOURCES | GTK_SVG_EXTENSIONS"/>
+    <property name="playing" type="gboolean" flags="1073741827" default-value="FALSE"/>
+    <property name="weight" type="gdouble" flags="1073741827" default-value="-1.000000"/>
+    <property name="state" type="guint" flags="1073741827" default-value="0"/>
+    <signal name="error" return="void" when="last">
+      <param type="GError"/>
+    </signal>
   </class>
   <class name="GtkSwitch" get-type="gtk_switch_get_type" parents="GtkWidget,GInitiallyUnowned,GObject">
     <implements name="GtkAccessible"/>
@@ -4212,6 +4343,7 @@
     <implements name="GtkConstraintTarget"/>
     <property name="side" type="GtkPackType" flags="1073742051" default-value="GTK_PACK_START"/>
     <property name="decoration-layout" type="gchararray" flags="1073742051" default-value="NULL"/>
+    <property name="use-native-controls" type="gboolean" flags="1073742051" default-value="FALSE"/>
     <property name="empty" type="gboolean" flags="1073742049" default-value="TRUE"/>
   </class>
   <class name="GtkWindowGroup" get-type="gtk_window_group_get_type" parents="GObject">
@@ -4291,4 +4423,5 @@
   <error-quark function="gtk_file_chooser_error_quark" domain="gtk-file-chooser-error-quark"/>
   <error-quark function="gtk_print_error_quark" domain="gtk-print-error-quark"/>
   <error-quark function="gtk_recent_manager_error_quark" domain="gtk-recent-manager-error-quark"/>
+  <error-quark function="gtk_svg_error_quark" domain="GtkSvgError"/>
 </dump>

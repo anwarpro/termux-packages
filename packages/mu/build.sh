@@ -2,12 +2,15 @@ TERMUX_PKG_HOMEPAGE=https://www.djcbsoftware.nl/code/mu/
 TERMUX_PKG_DESCRIPTION="Maildir indexer/searcher and Emacs client (mu4e)"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.12.5"
-TERMUX_PKG_SRCURL=https://github.com/djcb/mu/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=7f36a903f2df9b74cc53c11ad6113eeef6e6caf464ec599d5e29faff308d0bd6
+TERMUX_PKG_VERSION="1.14.0"
+TERMUX_PKG_SRCURL="https://github.com/djcb/mu/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
+TERMUX_PKG_SHA256=b558dccf7aeafb9bb3ba628d7233c35581ded9c3be5a39cc844c531906805574
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_DEPENDS="emacs, glib, libc++, libxapian, libgmime"
-TERMUX_PKG_EXTRA_CONFIGURE_ARGS="-Dtests=disabled"
+TERMUX_PKG_DEPENDS="emacs, fmt, glib, libc++, libxapian, libgmime"
+TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
+-Dtests=disabled
+-Demacs=disabled
+"
 
 termux_step_create_debscripts() {
 	cat <<- EOF > ./postinst

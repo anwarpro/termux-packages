@@ -1,10 +1,11 @@
-TERMUX_PKG_HOMEPAGE=http://miniupnp.free.fr/
+TERMUX_PKG_HOMEPAGE=https://miniupnp.tuxfamily.org/
 TERMUX_PKG_DESCRIPTION="Small UPnP client library and tool to access Internet Gateway Devices"
 TERMUX_PKG_LICENSE="BSD 3-Clause"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2.2.8"
-TERMUX_PKG_SRCURL=http://miniupnp.free.fr/files/miniupnpc-${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=05b929679091b9921b6b6c1f25e39e4c8d1f4d46c8feb55a412aa697aee03a93
+TERMUX_PKG_VERSION="2.3.3"
+TERMUX_PKG_REVISION=1
+TERMUX_PKG_SRCURL=https://miniupnp.tuxfamily.org/files/miniupnpc-${TERMUX_PKG_VERSION}.tar.gz
+TERMUX_PKG_SHA256=d52a0afa614ad6c088cc9ddff1ae7d29c8c595ac5fdd321170a05f41e634bd1a
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_BREAKS="miniupnpc-dev"
 TERMUX_PKG_REPLACES="miniupnpc-dev"

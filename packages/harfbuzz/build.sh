@@ -2,17 +2,19 @@ TERMUX_PKG_HOMEPAGE=https://www.freedesktop.org/wiki/Software/HarfBuzz/
 TERMUX_PKG_DESCRIPTION="OpenType text shaping engine"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="8.5.0"
+TERMUX_PKG_VERSION="14.2.0"
 TERMUX_PKG_SRCURL=https://github.com/harfbuzz/harfbuzz/archive/refs/tags/${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=7ad8e4e23ce776efb6a322f653978b3eb763128fd56a90252775edb9fd327956
+TERMUX_PKG_SHA256=c652d5d94971031654ab3989891a490a895d3e3f2b71171c62692b28e94b1b93
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="freetype, glib, libcairo, libgraphite"
 TERMUX_PKG_BUILD_DEPENDS="g-ir-scanner, glib-cross"
 TERMUX_PKG_BREAKS="harfbuzz-dev"
 TERMUX_PKG_REPLACES="harfbuzz-dev"
+TERMUX_PKG_VERSIONED_GIR=false
 TERMUX_PKG_DISABLE_GIR=false
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -Dcpp_std=c++17
+-Ddocs=disabled
 -Dgobject=enabled
 -Dgraphite=enabled
 -Dintrospection=enabled
@@ -36,16 +38,14 @@ termux_step_post_get_source() {
 }
 
 termux_step_pre_configure() {
-	TERMUX_PKG_VERSION=. termux_setup_gir
+	termux_setup_gir
+	termux_setup_glib_cross_pkg_config_wrapper
+}
 
-	local _WRAPPER_BIN="${TERMUX_PKG_BUILDDIR}/_wrapper/bin"
-	mkdir -p "${_WRAPPER_BIN}"
-	if [[ "${TERMUX_ON_DEVICE_BUILD}" == "false" ]]; then
-		sed "s|^export PKG_CONFIG_LIBDIR=|export PKG_CONFIG_LIBDIR=${TERMUX_PREFIX}/opt/glib/cross/lib/x86_64-linux-gnu/pkgconfig:|" \
-			"${TERMUX_STANDALONE_TOOLCHAIN}/bin/pkg-config" \
-			> "${_WRAPPER_BIN}/pkg-config"
-		chmod +x "${_WRAPPER_BIN}/pkg-config"
-		export PKG_CONFIG="${_WRAPPER_BIN}/pkg-config"
-	fi
-	export PATH="${_WRAPPER_BIN}:${PATH}"
+termux_step_post_make_install() {
+	install -Dm600 "$TERMUX_PKG_BUILDER_DIR"/hb-info.1 "$TERMUX_PREFIX"/share/man/man1/hb-info.1
+	install -Dm600 "$TERMUX_PKG_BUILDER_DIR"/hb-shape.1 "$TERMUX_PREFIX"/share/man/man1/hb-shape.1
+	install -Dm600 "$TERMUX_PKG_BUILDER_DIR"/hb-subset.1 "$TERMUX_PREFIX"/share/man/man1/hb-subset.1
+	install -Dm600 "$TERMUX_PKG_BUILDER_DIR"/hb-vector.1 "$TERMUX_PREFIX"/share/man/man1/hb-vector.1
+	install -Dm600 "$TERMUX_PKG_BUILDER_DIR"/hb-view.1 "$TERMUX_PREFIX"/share/man/man1/hb-view.1
 }

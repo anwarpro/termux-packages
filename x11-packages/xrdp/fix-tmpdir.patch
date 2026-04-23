@@ -1,3 +1,15 @@
+diff --git a/common/xrdp_sockets.h b/common/xrdp_sockets.h
+index c39f6db..20f6286 100644
+--- a/common/xrdp_sockets.h
++++ b/common/xrdp_sockets.h
+@@ -62,6 +62,6 @@
+ #define XRDP_DISCONNECT_STR   XRDP_SOCKET_PATH "/" XRDP_DISCONNECT_BASE_STR
+ 
+ /* Where X11 stores its Unix Domain Sockets (unlikely to change) */
+-#define X11_UNIX_SOCKET_DIRECTORY "/tmp/.X11-unix"
++#define X11_UNIX_SOCKET_DIRECTORY "@TERMUX_PREFIX@/tmp/.X11-unix"
+ 
+ #endif
 diff --git a/sesman/session_list.c b/sesman/session_list.c
 index c4fd9d3..20771a7 100644
 --- a/sesman/session_list.c

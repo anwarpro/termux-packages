@@ -2,22 +2,27 @@ TERMUX_PKG_HOMEPAGE=https://opencv.org/
 TERMUX_PKG_DESCRIPTION="Open Source Computer Vision Library"
 TERMUX_PKG_LICENSE="Apache-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="4.9.0"
+TERMUX_PKG_VERSION="4.13.0"
 TERMUX_PKG_REVISION=2
-TERMUX_PKG_SRCURL=(https://github.com/opencv/opencv/archive/${TERMUX_PKG_VERSION}/opencv-${TERMUX_PKG_VERSION}.tar.gz)
-TERMUX_PKG_SRCURL+=(https://github.com/opencv/opencv_contrib/archive/${TERMUX_PKG_VERSION}/opencv_contrib-${TERMUX_PKG_VERSION}.tar.gz)
-TERMUX_PKG_SHA256=(ddf76f9dffd322c7c3cb1f721d0887f62d747b82059342213138dc190f28bc6c)
-TERMUX_PKG_SHA256+=(8952c45a73b75676c522dd574229f563e43c271ae1d5bbbd26f8e2b6bc1a4dae)
-TERMUX_PKG_DEPENDS="abseil-cpp, ffmpeg, libc++, libjpeg-turbo, libopenblas, libpng, libtiff, libwebp, openjpeg, openjpeg-tools, qt5-qtbase, zlib"
-# For static libprotobuf see
-# https://github.com/termux/termux-packages/issues/16979
-TERMUX_PKG_BUILD_DEPENDS="libutf8-range, protobuf-static, python-numpy-static"
-TERMUX_PKG_PYTHON_COMMON_DEPS="Cython, wheel"
+TERMUX_PKG_SRCURL=(
+	"https://github.com/opencv/opencv/archive/refs/tags/${TERMUX_PKG_VERSION}/opencv-${TERMUX_PKG_VERSION}.tar.gz"
+	"https://github.com/opencv/opencv_contrib/archive/refs/tags/${TERMUX_PKG_VERSION}/opencv_contrib-${TERMUX_PKG_VERSION}.tar.gz"
+)
+TERMUX_PKG_SHA256=(
+	1d40ca017ea51c533cf9fd5cbde5b5fe7ae248291ddf2af99d4c17cf8e13017d
+	1e0077a4fd2960a7d2f4c9e49d6ba7bb891cac2d1be36d7e8e47aa97a9d1039b
+)
+TERMUX_PKG_AUTO_UPDATE=true
+TERMUX_PKG_DEPENDS="abseil-cpp, ffmpeg, libc++, libjpeg-turbo, libopenblas, libpng, libprotobuf, libtiff, libwebp, openjpeg, openjpeg-tools, qt6-qtbase, qt6-qt5compat, zlib"
+TERMUX_PKG_BUILD_DEPENDS="python-numpy-static"
+TERMUX_PKG_PYTHON_COMMON_BUILD_DEPS="Cython, wheel"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
+-DCMAKE_INSTALL_LIBDIR=$TERMUX__PREFIX__LIB_SUBDIR
+-DCMAKE_INSTALL_INCLUDEDIR=$TERMUX__PREFIX__INCLUDE_SUBDIR
 -DANDROID_NO_TERMUX=OFF
 -DWITH_GSTREAMER=OFF
 -DWITH_OPENEXR=OFF
--DWITH_QT=ON
+-DWITH_QT=6
 -DBUILD_PERF_TESTS=OFF
 -DBUILD_PROTOBUF=OFF
 -DBUILD_TESTS=OFF
@@ -29,12 +34,14 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 
 termux_step_pre_configure() {
 	termux_setup_protobuf
-	TERMUX_PKG_EXTRA_CONFIGURE_ARGS+=" -DProtobuf_PROTOC_EXECUTABLE=$(command -v protoc)"
-	sed -i 's/COMMAND\sprotobuf::protoc/COMMAND ${Protobuf_PROTOC_EXECUTABLE}/g' $TERMUX_PREFIX/lib/cmake/protobuf/protobuf-generate.cmake
+
+	if [ "$TERMUX_ON_DEVICE_BUILD" = "false" ]; then
+		# By default cmake will pick $TERMUX_PREFIX/bin/protoc, we should avoid it when cross-compiling
+		TERMUX_PKG_EXTRA_CONFIGURE_ARGS+=" -DPROTOBUF_PROTOC_EXECUTABLE=$(command -v protoc)"
+	fi
 
 	# Keep this the same version which abseil-cpp requires
 	CXXFLAGS+=" -std=c++17"
-	LDFLAGS+=" -lutf8_range -lutf8_validity"
 	LDFLAGS+=" $($TERMUX_SCRIPTDIR/packages/libprotobuf/interface_link_libraries.sh)"
 	LDFLAGS+=" -llog"
 
@@ -46,16 +53,6 @@ termux_step_pre_configure() {
 	TERMUX_PKG_EXTRA_CONFIGURE_ARGS+="
 		-DPYTHON_DEFAULT_EXECUTABLE=python
 		-DPYTHON3_INCLUDE_PATH=$TERMUX_PREFIX/include/python${TERMUX_PYTHON_VERSION}
-		-DPYTHON3_NUMPY_INCLUDE_DIRS=$TERMUX_PYTHON_HOME/site-packages/numpy/core/include
+		-DPYTHON3_NUMPY_INCLUDE_DIRS=$TERMUX_PYTHON_HOME/site-packages/numpy/_core/include
 		"
-
-	mv $TERMUX_PREFIX/lib/libprotobuf.so{,.tmp}
-}
-
-termux_step_post_make_install() {
-	mv $TERMUX_PREFIX/lib/libprotobuf.so{.tmp,}
-}
-
-termux_step_post_massage() {
-	rm -rf lib/libprotobuf.so lib/cmake/protobuf/
 }

@@ -2,15 +2,15 @@ TERMUX_PKG_HOMEPAGE=https://www.qt.io/
 TERMUX_PKG_DESCRIPTION="Classes for QML and JavaScript languages"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="6.7.1"
-TERMUX_PKG_REVISION=1
+TERMUX_PKG_VERSION="6.11.0"
 TERMUX_PKG_SRCURL="https://download.qt.io/official_releases/qt/${TERMUX_PKG_VERSION%.*}/${TERMUX_PKG_VERSION}/submodules/qtdeclarative-everywhere-src-${TERMUX_PKG_VERSION}.tar.xz"
-TERMUX_PKG_SHA256=81135c96ed2f599385b8a68c57f4f438dad193c62f946f5b200a321558fd9f1c
-TERMUX_PKG_DEPENDS="libc++, qt6-qtbase"
-TERMUX_PKG_BUILD_DEPENDS="qt6-qtlanguageserver, qt6-shadertools"
+TERMUX_PKG_SHA256=4eece569431ddf8324e7d322fa27001916570b23df535f8fb28aba445eedfde9
+TERMUX_PKG_DEPENDS="libc++, qt6-qtbase (>= ${TERMUX_PKG_VERSION})"
+TERMUX_PKG_BUILD_DEPENDS="qt6-qtlanguageserver (>= ${TERMUX_PKG_VERSION}), qt6-shadertools (>= ${TERMUX_PKG_VERSION})"
 TERMUX_PKG_RECOMMENDS="qt6-qtlanguageserver"
 TERMUX_PKG_HOSTBUILD=true
 TERMUX_PKG_NO_STATICSPLIT=true
+TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DCMAKE_MESSAGE_LOG_LEVEL=STATUS
 -DCMAKE_SYSTEM_NAME=Linux
@@ -46,12 +46,20 @@ termux_step_host_build() {
 		-exec echo "{}" \; \
 		-exec cat "{}" \; \
 		-exec sed -e "s|^${TERMUX_PREFIX}/opt/qt6/cross|..|g" -i "{}" \;
-	cat $PWD/user_facing_tool_links.txt | xargs -P${TERMUX_PKG_MAKE_PROCESSES} -L1 ln -sv
+
+	while read -r target link; do
+		ln -sfv "$target" "$TERMUX_PREFIX/opt/qt6/cross/$link"
+	done < "$PWD/user_facing_tool_links.txt"
 }
 
 termux_step_pre_configure() {
 	termux_setup_cmake
 	termux_setup_ninja
+
+	# The -flto flag seems to be used only when compiling and not linking,
+	# which breaks the NDK clang fallback to emulated TLS - see
+	# https://github.com/termux/termux-packages/issues/21733:
+	LDFLAGS+=" -flto"
 }
 
 termux_step_make_install() {
@@ -65,5 +73,8 @@ termux_step_post_make_install() {
 	find ${TERMUX_PKG_BUILDDIR} -type f -name user_facing_tool_links.txt \
 		-exec echo "{}" \; \
 		-exec cat "{}" \;
-	cat $PWD/user_facing_tool_links.txt | xargs -P${TERMUX_PKG_MAKE_PROCESSES} -L1 ln -sv
+
+	while read -r target link; do
+		ln -sfv "$target" "$TERMUX_PREFIX/$link"
+	done < "$PWD/user_facing_tool_links.txt"
 }

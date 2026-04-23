@@ -1,17 +1,17 @@
-TERMUX_PKG_HOMEPAGE=https://www.freedesktop.org/wiki/Software/XKeyboardConfig/
+TERMUX_PKG_HOMEPAGE=https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config
 TERMUX_PKG_DESCRIPTION="X keyboard configuration files"
-# Licenses: HPND, MIT
-TERMUX_PKG_LICENSE="custom"
-TERMUX_PKG_LICENSE_FILE="COPYING"
+TERMUX_PKG_LICENSE="HPND, MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="2.41"
-TERMUX_PKG_SRCURL=https://xorg.freedesktop.org/archive/individual/data/xkeyboard-config/xkeyboard-config-${TERMUX_PKG_VERSION}.tar.xz
-TERMUX_PKG_SHA256=f02cd6b957295e0d50236a3db15825256c92f67ef1f73bf1c77a4b179edf728f
+TERMUX_PKG_VERSION="2.47"
+TERMUX_PKG_REVISION=1
+TERMUX_PKG_SRCURL=https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/archive/xkeyboard-config-${TERMUX_PKG_VERSION}/xkeyboard-config-xkeyboard-config-${TERMUX_PKG_VERSION}.tar.gz
+TERMUX_PKG_SHA256=b199d506aed1a03d00f11411091f6db8f136ef68f308d4747c76151e59cba874
 TERMUX_PKG_AUTO_UPDATE=true
+TERMUX_PKG_UPDATE_TAG_TYPE=newest-tag
 TERMUX_PKG_PLATFORM_INDEPENDENT=true
-
+TERMUX_PKG_BUILD_DEPENDS="python"
+TERMUX_PKG_PYTHON_COMMON_BUILD_DEPS="StrEnum"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
--Dxkb-base=${TERMUX_PREFIX}/share/X11/xkb
 -Dcompat-rules=true
 -Dxorg-rules-symlinks=true
 "

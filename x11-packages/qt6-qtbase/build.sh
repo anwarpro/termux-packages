@@ -1,17 +1,20 @@
 TERMUX_PKG_HOMEPAGE=https://www.qt.io/
 TERMUX_PKG_DESCRIPTION="A cross-platform application and UI framework"
-TERMUX_PKG_LICENSE="GPL-3.0"
+TERMUX_PKG_LICENSE="GPL-3.0-only"
 TERMUX_PKG_LICENSE_FILE="LICENSES/GPL-3.0-only.txt"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="6.7.1"
-TERMUX_PKG_REVISION=3
+TERMUX_PKG_VERSION="6.11.0"
 TERMUX_PKG_SRCURL="https://download.qt.io/official_releases/qt/${TERMUX_PKG_VERSION%.*}/${TERMUX_PKG_VERSION}/submodules/qtbase-everywhere-src-${TERMUX_PKG_VERSION}.tar.xz"
-TERMUX_PKG_SHA256=b7338da1bdccb4d861e714efffaa83f174dfe37e194916bfd7ec82279a6ace19
-TERMUX_PKG_DEPENDS="brotli, double-conversion, freetype, glib, harfbuzz, libandroid-shmem, libandroid-posix-semaphore, libc++, libdrm, libice, libicu, libjpeg-turbo, libpng, libsm, libsqlite, libuuid, libx11, libxcb, libxi, libxkbcommon, libwayland, opengl, openssl, pcre2, vulkan-loader, xcb-util-cursor, xcb-util-image, xcb-util-keysyms, xcb-util-renderutil, xcb-util-wm, zlib, zstd"
-TERMUX_PKG_BUILD_DEPENDS="binutils-cross, libwayland-protocols, vulkan-headers, vulkan-loader-generic"
+TERMUX_PKG_SHA256=231ad85979864d914dc9568a1b71c91d6cf20d7b2021d059103bf0eb51cb755e
+TERMUX_PKG_DEPENDS="brotli, double-conversion, freetype, glib, harfbuzz, krb5, libandroid-posix-semaphore, libandroid-shmem, libc++, libdrm, libice, libicu, libjpeg-turbo, libpng, libsm, libsqlite, libuuid, libx11, libxcb, libxi, libxkbcommon, libwayland, opengl, openssl, pcre2, vulkan-loader, xcb-util-cursor, xcb-util-image, xcb-util-keysyms, xcb-util-renderutil, xcb-util-wm, zlib, zstd"
+# gtk3 dependency is a run-time dependency only for the gtk platformtheme subpackage
+TERMUX_PKG_BUILD_DEPENDS="binutils-cross, cups, gdk-pixbuf, gtk3, libwayland-protocols, pango, vulkan-headers, vulkan-loader-generic"
+# qt6-qtbase now contains include/qt6/QtWaylandClient/QWaylandClientExtension instead of qt6-qtwayland
+TERMUX_PKG_CONFLICTS="qt6-qtwayland (<< 6.10.0)"
 TERMUX_PKG_HOSTBUILD=true
 TERMUX_PKG_FORCE_CMAKE=true
 TERMUX_PKG_NO_STATICSPLIT=true
+TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
 -DCMAKE_MESSAGE_LOG_LEVEL=STATUS
@@ -35,9 +38,9 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DQT_FEATURE_freetype=ON
 -DQT_FEATURE_gui=ON
 -DQT_FEATURE_harfbuzz=ON
+-DQT_FEATURE_ipc_posix=ON
 -DQT_FEATURE_widgets=ON
 -DQT_FEATURE_zstd=ON
--DQT_FEATURE_ipc_posix=ON
 -DQT_FORCE_BUILD_TOOLS=ON
 -DQT_HOST_PATH=${TERMUX_PREFIX}/opt/qt6/cross
 "
@@ -63,10 +66,6 @@ opt/qt6/cross/lib/qt6/qt-internal-configure-examples
 opt/qt6/cross/lib/qt6/qt-internal-configure-tests
 opt/qt6/cross/lib/qt6/qt-testrunner.py
 opt/qt6/cross/lib/qt6/sanitizer-testrunner.py
-"
-TERMUX_PKG_RM_AFTER_INSTALL="
-lib/objects-*
-opt/qt6/cross/lib/objects-*
 "
 
 termux_step_host_build() {
@@ -107,7 +106,11 @@ termux_step_host_build() {
 		-exec echo "{}" \; \
 		-exec cat "{}" \; \
 		-exec sed -e "s|^${TERMUX_PREFIX}/opt/qt6/cross|..|g" -i "{}" \;
-	cat $PWD/user_facing_tool_links.txt | xargs -P${TERMUX_PKG_MAKE_PROCESSES} -L1 ln -sv
+
+	while read -r target link; do
+		ln -sfv "$target" "$TERMUX_PREFIX/opt/qt6/cross/$link"
+	done < "$PWD/user_facing_tool_links.txt"
+
 	find ${TERMUX_PREFIX}/opt/qt6/cross -type f -name target_qt.conf \
 		-exec echo "{}" \; \
 		-exec cat "{}" \;
@@ -116,9 +119,8 @@ termux_step_host_build() {
 termux_step_pre_configure() {
 	termux_setup_cmake
 	termux_setup_ninja
-	[[ "${TERMUX_ARCH}" == "arm" ]] && termux_setup_no_integrated_as
 
-	LDFLAGS+=" -landroid-shmem -landroid-posix-semaphore"
+	LDFLAGS+=" -landroid-posix-semaphore -landroid-shmem"
 
 	TERMUX_PKG_EXTRA_CONFIGURE_ARGS+="
 	-DCMAKE_C_COMPILER_AR=$(command -v llvm-ar)
@@ -132,7 +134,11 @@ termux_step_post_make_install() {
 	find ${TERMUX_PKG_BUILDDIR} -type f -name user_facing_tool_links.txt \
 		-exec echo "{}" \; \
 		-exec cat "{}" \;
-	cat $PWD/user_facing_tool_links.txt | xargs -P${TERMUX_PKG_MAKE_PROCESSES} -L1 ln -sv
+
+	while read -r target link; do
+		ln -sfv "$target" "$TERMUX_PREFIX/$link"
+	done < "$PWD/user_facing_tool_links.txt"
+
 	find ${TERMUX_PREFIX}/lib/qt6 -type f -name target_qt.conf \
 		-exec echo "{}" \; \
 		-exec cat "{}" \;

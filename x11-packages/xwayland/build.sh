@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://xorg.freedesktop.org/wiki/
 TERMUX_PKG_DESCRIPTION="Wayland X11 server"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="24.1.0"
+TERMUX_PKG_VERSION="24.1.10"
 TERMUX_PKG_SRCURL=https://xorg.freedesktop.org/releases/individual/xserver/xwayland-${TERMUX_PKG_VERSION}.tar.xz
-TERMUX_PKG_SHA256=bef21c4f18807a4ed571c4e2df60ab63b5466bbd502ecceb2485b892ab76dcc2
+TERMUX_PKG_SHA256=459762be8ea046c94386687d77a87add6073868bee14f02913eafebb945b7aa0
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="libandroid-shmem, libdrm, libepoxy, libpciaccess, libpixman, libwayland, libwayland-protocols, libx11, libxau, libxcvt, libxfont2, libxinerama, libxkbfile, libxshmfence, opengl, openssl, xkeyboard-config, xorg-protocol-txt, xorg-xkbcomp"
 TERMUX_PKG_BUILD_DEPENDS="libwayland-cross-scanner"
@@ -39,7 +39,7 @@ share/man/man1/Xserver.1
 "
 
 termux_step_pre_configure() {
-	export PATH="$TERMUX_PREFIX/opt/libwayland/cross/bin:$PATH"
+	termux_setup_wayland_cross_pkg_config_wrapper
 
 	CFLAGS+=" -fcommon -fPIC -DFNDELAY=O_NDELAY -Wno-int-to-pointer-cast -Wno-implicit-function-declaration"
 	CPPFLAGS+=" -fcommon -fPIC -I${TERMUX_PREFIX}/include/libdrm"

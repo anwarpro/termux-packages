@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://github.com/doy/rbw
 TERMUX_PKG_DESCRIPTION="An unofficial command line client for Bitwarden"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="1.11.0"
+TERMUX_PKG_VERSION="1.15.0"
 TERMUX_PKG_SRCURL=https://github.com/doy/rbw/archive/refs/tags/${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=e8c54b5bc9717a5a16ac86ae54b48e5274562b0d032a813e42e2e18351069f63
+TERMUX_PKG_SHA256=660cfa4c727711665bef060046c28dd3924ca1e490fdc058d90d35372b2d2cf6
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="pinentry"
 TERMUX_PKG_BUILD_IN_SRC=true
@@ -12,7 +12,11 @@ TERMUX_PKG_BUILD_IN_SRC=true
 termux_step_make() {
 	termux_setup_rust
 
-	cargo build --jobs $TERMUX_PKG_MAKE_PROCESSES --target $CARGO_TARGET_NAME --release
+	cargo build \
+		--jobs "$TERMUX_PKG_MAKE_PROCESSES" \
+		--target "$CARGO_TARGET_NAME" \
+		--no-default-features \
+		--release
 }
 
 termux_step_make_install() {

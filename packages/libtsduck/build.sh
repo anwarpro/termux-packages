@@ -2,15 +2,16 @@ TERMUX_PKG_HOMEPAGE=https://tsduck.io/
 TERMUX_PKG_DESCRIPTION="An extensible toolkit for MPEG transport streams"
 TERMUX_PKG_LICENSE="BSD 2-Clause"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="3.37.3670"
-_VERSION=$(echo "${TERMUX_PKG_VERSION}" | sed 's/\./-/2')
-TERMUX_PKG_SRCURL=https://github.com/tsduck/tsduck/archive/refs/tags/v${_VERSION}.tar.gz
-TERMUX_PKG_SHA256=dbb7c654330108c509f2d8a97fe0346e3a1f55ad959e13dcee4a40dd04507886
+TERMUX_PKG_VERSION="3.43.4549"
+TERMUX_PKG_REVISION=1
+TERMUX_PKG_SRCURL="https://github.com/tsduck/tsduck/archive/refs/tags/v$(sed 's/\./-/2' <<< "$TERMUX_PKG_VERSION").tar.gz"
+TERMUX_PKG_SHA256=a3399661d21e0d965dfef3750d4af7da61eb2924e7b48ee3edaae194ffa5203c
 TERMUX_PKG_DEPENDS="libandroid-glob, libc++, libcurl, libedit"
 TERMUX_PKG_HOSTBUILD=true
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_UPDATE_VERSION_SED_REGEXP='s/-/./g'
+TERMUX_PKG_UPDATE_TAG_TYPE=newest-tag
+TERMUX_PKG_UPDATE_VERSION_SED_REGEXP="s/-/./"
 TERMUX_PKG_EXTRA_MAKE_ARGS="
 ALTDEVROOT=${TERMUX_PREFIX}
 CROSS=1
@@ -29,6 +30,7 @@ NOVATEK=1
 SYSPREFIX=${TERMUX_PREFIX}
 USELIB64=
 CXXFLAGS_WARNINGS=
+NATIVEBINDIR=$TERMUX_PKG_HOSTBUILD_DIR/bin/release
 "
 TERMUX_PKG_RM_AFTER_INSTALL="
 etc/security
@@ -66,10 +68,10 @@ termux_step_pre_configure() {
 
 termux_step_make() {
 	sed \
-		-e "s|\$(call F_SEARCH_CROSS,g++)|${CXX}|g" \
-		-e "s|\$(call F_SEARCH_CROSS,gcc)|${CC}|g" \
-		-e "s|\$(call F_SEARCH_CROSS,ld)|${LD}|g" \
-		-i ${TERMUX_PKG_SRCDIR}/Makefile.inc
+		-e "s|\$(search-cross g++)|${CXX}|g" \
+		-e "s|\$(search-cross gcc)|${CC}|g" \
+		-e "s|\$(search-cross ld)|${LD}|g" \
+		-i ${TERMUX_PKG_SRCDIR}/scripts/make-config.sh
 	make -j $TERMUX_PKG_MAKE_PROCESSES \
 		CXX="$CXX" \
 		GCC="$CC" \

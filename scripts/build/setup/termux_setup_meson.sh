@@ -1,6 +1,6 @@
 termux_setup_meson() {
 	termux_setup_ninja
-	local MESON_VERSION=1.4.0
+	local MESON_VERSION=1.10.0
 	local MESON_FOLDER
 
 	if [ "${TERMUX_PACKAGES_OFFLINE-false}" = "true" ]; then
@@ -16,7 +16,7 @@ termux_setup_meson() {
 		termux_download \
 			"https://github.com/mesonbuild/meson/releases/download/$MESON_VERSION/meson-$MESON_VERSION.tar.gz" \
 			"$MESON_TAR_FILE" \
-			8fd6630c25c27f1489a8a0392b311a60481a3c161aa699b330e25935b750138d
+			8071860c1f46a75ea34801490fd1c445c9d75147a65508cd3a10366a7006cc1c
 		tar xf "$MESON_TAR_FILE" -C "$TERMUX_PKG_TMPDIR"
 		shopt -s nullglob
 		local f
@@ -27,7 +27,10 @@ termux_setup_meson() {
 		shopt -u nullglob
 		mv "$MESON_TMP_FOLDER" "$MESON_FOLDER"
 	fi
-	TERMUX_MESON="$MESON_FOLDER/meson.py"
+	TERMUX_MESON="${MESON_FOLDER}/meson.py"
+	if [ "$TERMUX_ON_DEVICE_BUILD" = "false" ]; then
+		TERMUX_MESON="/usr/bin/python3 ${TERMUX_MESON}"
+	fi
 	TERMUX_MESON_CROSSFILE=$TERMUX_PKG_TMPDIR/meson-crossfile-$TERMUX_ARCH.txt
 	local MESON_CPU MESON_CPU_FAMILY
 	if [ "$TERMUX_ARCH" = "arm" ]; then
@@ -46,15 +49,17 @@ termux_setup_meson() {
 		termux_error_exit "Unsupported arch: $TERMUX_ARCH"
 	fi
 
-	local CONTENT=""
 	echo "[binaries]" > $TERMUX_MESON_CROSSFILE
 	echo "ar = '$AR'" >> $TERMUX_MESON_CROSSFILE
 	echo "c = '$CC'" >> $TERMUX_MESON_CROSSFILE
 	echo "cmake = 'cmake'" >> $TERMUX_MESON_CROSSFILE
 	echo "cpp = '$CXX'" >> $TERMUX_MESON_CROSSFILE
 	echo "ld = '$LD'" >> $TERMUX_MESON_CROSSFILE
-	echo "pkgconfig = '$PKG_CONFIG'" >> $TERMUX_MESON_CROSSFILE
+	echo "pkg-config = '$PKG_CONFIG'" >> $TERMUX_MESON_CROSSFILE
 	echo "strip = '$STRIP'" >> $TERMUX_MESON_CROSSFILE
+	if [[ -n "$(command -v rustc)" && -n "${CARGO_TARGET_NAME-}" ]]; then
+		echo "rust = ['rustc', '--target', '$CARGO_TARGET_NAME']" >> $TERMUX_MESON_CROSSFILE
+	fi
 
 	if [ "$TERMUX_PACKAGE_LIBRARY" = "bionic" ]; then
 		echo '' >> $TERMUX_MESON_CROSSFILE

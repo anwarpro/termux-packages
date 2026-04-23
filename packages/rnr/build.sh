@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE="https://github.com/ismaelgv/rnr"
 TERMUX_PKG_DESCRIPTION="Batch rename files and directories using regular expression (rust)"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@flosnvjx"
-TERMUX_PKG_VERSION="0.4.2"
+TERMUX_PKG_VERSION="0.5.1"
 TERMUX_PKG_SRCURL="https://github.com/ismaelgv/rnr/archive/refs/tags/v$TERMUX_PKG_VERSION.tar.gz"
-TERMUX_PKG_SHA256=cde8e5366552263300e60133b82f6a3868aeced2fe83abc91c2168085dff0998
+TERMUX_PKG_SHA256=af35b5d5afab08b01cab345686d7e7d2d37a33d268fa8827a8001c3164ef4722
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
 

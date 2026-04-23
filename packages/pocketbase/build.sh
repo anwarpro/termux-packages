@@ -2,9 +2,9 @@ TERMUX_PKG_HOMEPAGE=https://github.com/pocketbase/pocketbase
 TERMUX_PKG_DESCRIPTION="An open source Go backend"
 TERMUX_PKG_LICENSE="MIT"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.22.14"
+TERMUX_PKG_VERSION="0.37.3"
 TERMUX_PKG_SRCURL="https://github.com/pocketbase/pocketbase/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
-TERMUX_PKG_SHA256=382a11c5a495b78f9852f0063cc8538a7ca35d2a00eadb7e8d7cc8f1cfbb728f
+TERMUX_PKG_SHA256=3206ecc895cc9702d5a1d0c2a9c9bf651cb9b0fa73934b3dc5f953d146e73132
 TERMUX_PKG_DEPENDS="resolv-conf"
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_AUTO_UPDATE=true
@@ -15,7 +15,7 @@ termux_step_make() {
 	mkdir ./gopath
 	export GOPATH="$PWD/gopath"
 
-	cd $TERMUX_PKG_SRCDIR/examples/base
+	cd "$TERMUX_PKG_SRCDIR/examples/base"
 
 	export GOBUILD=CGO_ENABLED=0
 

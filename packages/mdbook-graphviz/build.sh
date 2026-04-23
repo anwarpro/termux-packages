@@ -2,15 +2,18 @@ TERMUX_PKG_HOMEPAGE=https://github.com/dylanowen/mdbook-graphviz
 TERMUX_PKG_DESCRIPTION="mdbook preprocessor to add graphviz support"
 TERMUX_PKG_LICENSE="MPL-2.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="0.2.0"
+TERMUX_PKG_VERSION="0.3.1"
 TERMUX_PKG_SRCURL=https://github.com/dylanowen/mdbook-graphviz/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=7a74d7a12bd2a0b7a119d0b14ca7e7d3840acb347debff9ec0ad4d4add026785
+TERMUX_PKG_SHA256=606842d7afbcefb2517c8fbd6993eadd18b41c5379eaa7602f5fb668d5b92b5d
 TERMUX_PKG_AUTO_UPDATE=true
 TERMUX_PKG_DEPENDS="graphviz"
 TERMUX_PKG_BUILD_IN_SRC=true
 
-termux_step_make() {
+termux_step_pre_configure() {
 	termux_setup_rust
+}
+
+termux_step_make() {
 	cargo build --jobs $TERMUX_PKG_MAKE_PROCESSES --target $CARGO_TARGET_NAME --release
 }
 

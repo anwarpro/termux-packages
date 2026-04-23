@@ -2,12 +2,11 @@ TERMUX_PKG_HOMEPAGE=https://libvips.github.io/libvips/
 TERMUX_PKG_DESCRIPTION="A fast image processing library with low memory needs"
 TERMUX_PKG_LICENSE="LGPL-2.1"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION="8.15.2a"
-TERMUX_PKG_REVISION=1
-TERMUX_PKG_SRCURL=https://github.com/libvips/libvips/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=e59d50fd7d4594b86b86e6cc03e7c8ec7fbeaae910cf0e525f45e7adfe52cba6
+TERMUX_PKG_VERSION="8.18.2"
+TERMUX_PKG_SRCURL="https://github.com/libvips/libvips/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
+TERMUX_PKG_SHA256=c6e9f3c384436c6ffc75848d1ad76347368b9639897f6d9f909178dc986d5200
 TERMUX_PKG_AUTO_UPDATE=true
-TERMUX_PKG_DEPENDS="cgif, fftw, fontconfig, glib, imagemagick, libc++, libcairo, libexif, libexpat, libheif, libimagequant, libjpeg-turbo, libjxl, libpng, librsvg, libtiff, libwebp, littlecms, openexr, openjpeg, pango, poppler, zlib"
+TERMUX_PKG_DEPENDS="cgif, fftw, fontconfig, glib, imagemagick, imath, libc++, libcairo, libexif, libexpat, libheif, libimagequant, libjpeg-turbo, libjxl, libpng, librsvg, libtiff, libwebp, littlecms, openexr, openjpeg, pango, poppler, zlib"
 TERMUX_PKG_BUILD_DEPENDS="g-ir-scanner, glib-cross, valac"
 TERMUX_PKG_DISABLE_GIR=true
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
@@ -18,15 +17,18 @@ TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 
 termux_step_pre_configure() {
 	termux_setup_gir
+	termux_setup_glib_cross_pkg_config_wrapper
 
-	local _WRAPPER_BIN="${TERMUX_PKG_BUILDDIR}/_wrapper/bin"
-	mkdir -p "${_WRAPPER_BIN}"
-	if [[ "${TERMUX_ON_DEVICE_BUILD}" == "false" ]]; then
-		sed "s|^export PKG_CONFIG_LIBDIR=|export PKG_CONFIG_LIBDIR=${TERMUX_PREFIX}/opt/glib/cross/lib/x86_64-linux-gnu/pkgconfig:|" \
-			"${TERMUX_STANDALONE_TOOLCHAIN}/bin/pkg-config" \
-			> "${_WRAPPER_BIN}/pkg-config"
-		chmod +x "${_WRAPPER_BIN}/pkg-config"
-		export PKG_CONFIG="${_WRAPPER_BIN}/pkg-config"
+	export TERMUX_MESON_ENABLE_SOVERSION=1
+}
+
+termux_step_post_massage() {
+	# Do not forget to bump revision of reverse dependencies and rebuild them
+	# after SOVERSION is changed.
+	local _SOVERSION=42
+	if [ ! -e "lib/libvips.so.${_SOVERSION}" ]; then
+		echo "ERROR: Expected: lib/libvips.so.${_SOVERSION}" 1>&2
+		echo "ERROR: Found   : $(find lib/libvips* -regex '.*so\.[0-9]+')" 1>&2
+		termux_error_exit "Not proceeding with update."
 	fi
-	export PATH="${_WRAPPER_BIN}:${PATH}"
 }

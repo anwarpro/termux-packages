@@ -1,15 +1,18 @@
-TERMUX_PKG_HOMEPAGE=https://github.com/badaix/snapcast
+TERMUX_PKG_HOMEPAGE=https://github.com/snapcast/snapcast
 TERMUX_PKG_DESCRIPTION="A multiroom client-server audio player (server)"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="@termux"
-TERMUX_PKG_VERSION=0.28.0
-TERMUX_PKG_SRCURL=https://github.com/badaix/snapcast/archive/v${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=7911037dd4b06fe98166db1d49a7cd83ccf131210d5aaad47507bfa0cfc31407
-TERMUX_PKG_DEPENDS="libc++, libexpat, libflac, libopus, libsoxr, libvorbis"
+TERMUX_PKG_VERSION="0.35.0"
+TERMUX_PKG_SRCURL="https://github.com/snapcast/snapcast/archive/refs/tags/v${TERMUX_PKG_VERSION}.tar.gz"
+TERMUX_PKG_SHA256=cb75a71479bf52910bf5f47ae8120ec41c89459b0d77d7cd560e674e437ef050
+TERMUX_PKG_DEPENDS="libc++, libexpat, libflac, libogg, libopus, libsoxr, libvorbis, openssl"
 TERMUX_PKG_BUILD_DEPENDS="boost, boost-headers"
 TERMUX_PKG_EXTRA_CONFIGURE_ARGS="
 -DBoost_INCLUDE_DIR=$TERMUX_PREFIX/include
 -DANDROID_NO_TERMUX=OFF
+-DBUILD_WITH_ALSA=OFF
+-DBUILD_WITH_AVAHI=OFF
+-DBUILD_WITH_PULSE=ON
 -DBUILD_TESTS=OFF
 "
 TERMUX_PKG_AUTO_UPDATE=true

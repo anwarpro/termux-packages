@@ -4,15 +4,16 @@ TERMUX_PKG_LICENSE="PHP-3.01"
 TERMUX_PKG_LICENSE_FILE=LICENSE
 TERMUX_PKG_MAINTAINER="@termux"
 # Please revbump php-* extensions along with "minor" bump (e.g. 8.1.x to 8.2.0)
-TERMUX_PKG_VERSION="8.3.8"
-TERMUX_PKG_SRCURL=https://github.com/php/php-src/archive/php-${TERMUX_PKG_VERSION}.tar.gz
-TERMUX_PKG_SHA256=0f14f28d6f8d9ab35c618ee39f0dc9c9441a4242443fca2733d68ef27f6c6290
+TERMUX_PKG_VERSION="8.5.1"
+TERMUX_PKG_SRCURL=https://github.com/php/php-src/archive/refs/tags/php-${TERMUX_PKG_VERSION}.tar.gz
+TERMUX_PKG_SHA256=846f7c5bdb8c2ebb313c4ec25d92339bcbaf733743c9f6a7646e9a5134b90a8e
 TERMUX_PKG_AUTO_UPDATE=false
 # Build native php for phar to build (see pear-Makefile.frag.patch):
 TERMUX_PKG_HOSTBUILD=true
 # Build the native php without xml support as we only need phar:
 TERMUX_PKG_EXTRA_HOSTBUILD_CONFIGURE_ARGS="--disable-libxml --disable-dom --disable-simplexml --disable-xml --disable-xmlreader --disable-xmlwriter --without-pear --disable-sqlite3 --without-libxml --without-sqlite3 --without-pdo-sqlite"
-TERMUX_PKG_DEPENDS="libandroid-glob, libandroid-support, libbz2, libc++, libcurl, libffi, libgd, libgmp, libiconv, libicu, libresolv-wrapper, libsqlite, libxml2, libxslt, libzip, oniguruma, openssl, pcre2, readline, tidy, zlib"
+TERMUX_PKG_DEPENDS="capstone, libandroid-glob, libandroid-support, libbz2, libc++, libcurl, libffi, libgmp, libiconv, libicu, libresolv-wrapper, libsqlite, libxml2, libxslt, libzip, oniguruma, openssl, pcre2, readline, tidy, zlib"
+TERMUX_PKG_BUILD_DEPENDS="postgresql"
 TERMUX_PKG_CONFLICTS="php-mysql, php-dev"
 TERMUX_PKG_REPLACES="php-mysql, php-dev"
 TERMUX_PKG_RM_AFTER_INSTALL="php/php/fpm"
@@ -31,18 +32,19 @@ php_cv_lib_gd_gdImageCreateFromTga=yes
 --enable-calendar
 --enable-exif
 --enable-mbstring
---enable-opcache
+--with-capstone
 --enable-pcntl
 --enable-sockets
 --mandir=$TERMUX_PREFIX/share/man
 --with-bz2=$TERMUX_PREFIX
+--with-config-file-path=$TERMUX_PREFIX/etc/$TERMUX_PKG_NAME
+--with-config-file-scan-dir=$TERMUX_PREFIX/etc/$TERMUX_PKG_NAME/conf.d
 --with-curl=$TERMUX_PREFIX
 --with-ldap=shared,$TERMUX_PREFIX
 --with-ldap-sasl
 --with-openssl=$TERMUX_PREFIX
 --with-readline=$TERMUX_PREFIX
 --with-sodium=shared,$TERMUX_PREFIX
---with-iconv-dir=$TERMUX_PREFIX
 --with-zlib
 --with-pgsql=shared,$TERMUX_PREFIX
 --with-pdo-pgsql=shared,$TERMUX_PREFIX
@@ -52,7 +54,7 @@ php_cv_lib_gd_gdImageCreateFromTga=yes
 --with-apxs2=$TERMUX_PKG_TMPDIR/apxs-wrapper.sh
 --with-iconv=$TERMUX_PREFIX
 --enable-fpm
---enable-gd
+--enable-gd=shared,$TERMUX_PREFIX
 --with-external-gd
 --with-external-pcre
 --with-zip
@@ -88,10 +90,15 @@ termux_step_host_build() {
 termux_step_pre_configure() {
 	export PATH=$TERMUX_PKG_HOSTBUILD_DIR/_patchelf/src:$PATH
 
-	LDFLAGS+=" -lresolv_wrapper -landroid-glob -llog $($CC -print-libgcc-file-name)"
+	# warning: static library libclang_rt.builtins-aarch64-android.a is not portable
+	local _libgcc_file="$($CC -print-libgcc-file-name)"
+	local _libgcc_path="$(dirname $_libgcc_file)"
+	local _libgcc_name="$(basename $_libgcc_file)"
+	LDFLAGS+=" -lresolv_wrapper -landroid-glob -llog -L$_libgcc_path -l:$_libgcc_name -lm"
+
 	export PATH=$PATH:$TERMUX_PKG_HOSTBUILD_DIR/sapi/cli/
 	export NATIVE_PHP_EXECUTABLE=$TERMUX_PKG_HOSTBUILD_DIR/sapi/cli/php
-	export NATIVE_MINILUA_EXECUTABLE=$TERMUX_PKG_HOSTBUILD_DIR/ext/opcache/minilua
+	export NATIVE_MINILUA_EXECUTABLE=$TERMUX_PKG_HOSTBUILD_DIR/ext/opcache/jit/ir/minilua
 	if [ "$TERMUX_ARCH" = "aarch64" ]; then
 		CFLAGS+=" -march=armv8-a+crc"
 		CXXFLAGS+=" -march=armv8-a+crc"
@@ -128,6 +135,8 @@ termux_step_post_configure() {
 	sed -i 's/#define HAVE_GD_XPM 1//' $TERMUX_PKG_BUILDDIR/main/php_config.h
 	# Avoid src/ext/standard/dns.c trying to use struct __res_state:
 	sed -i 's/#define HAVE_RES_NSEARCH 1//' $TERMUX_PKG_BUILDDIR/main/php_config.h
+	# fix error: call to undeclared function pthread_* (https://github.com/php/php-src/blob/php-8.4.1/sapi/phpdbg/phpdbg_watch.c#L314)
+	sed -i 's/#define HAVE_USERFAULTFD_WRITEFAULT 1//' $TERMUX_PKG_BUILDDIR/main/php_config.h
 }
 
 termux_step_post_make_install() {
@@ -141,12 +150,18 @@ termux_step_post_make_install() {
 		cp $TERMUX_PKG_SRCDIR/php.ini-$suffix $docdir/
 	done
 
+	local extdir="$TERMUX_PREFIX/etc/$TERMUX_PKG_NAME/conf.d"
+	mkdir -p "$extdir"
+	for ext in gd ldap pgsql pdo_pgsql sodium; do
+		echo "extension=$ext" > "$extdir/$ext.ini"
+	done
+
 	sed -i 's/SED=.*/SED=sed/' $TERMUX_PREFIX/bin/phpize
 
 	# Shared extensions for PHP/Apache
 	mkdir -p $TERMUX_PREFIX/lib/php-apache
 	local f
-	for f in opcache ldap pdo_pgsql pgsql sodium; do
+	for f in ldap pdo_pgsql pgsql sodium; do
 		local so=$TERMUX_PREFIX/lib/php-apache/${f}.so
 		rm -f ${so}
 		cp -T $TERMUX_PREFIX/lib/php/${f}.so ${so}
